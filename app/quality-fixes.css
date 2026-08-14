@@ -45,6 +45,15 @@
   color: #4d463e;
 }
 
+/* Keep the two-line hero title dramatic without letting the glyphs collide. */
+.archive-home .cover-copy h1 {
+  line-height: .86;
+}
+
+.archive-home .cover-copy h1 b {
+  margin-top: .08em;
+}
+
 .story-page .story-player-copy small,
 .story-page .story-player-copy span,
 .story-page .story-progress-meta,
@@ -98,6 +107,14 @@
 }
 
 @media (max-width: 720px) {
+  .archive-home .cover-copy h1 {
+    line-height: .9;
+  }
+
+  .archive-home .cover-copy h1 b {
+    margin-top: .06em;
+  }
+
   .shop-page .shop-hero h1 {
     max-width: 100%;
     font-size: clamp(44px, 13vw, 58px);

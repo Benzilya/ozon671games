@@ -1,51 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { quietDan } from "../../data/stories";
+import { formatPlayerTime, type PlayerChapter, useLocalPlayer } from "../../player/useLocalPlayer";
 
-const storageKey = "ozon671:progress:tihiy-den";
-const demoChapters = [
-  { id: "chapter-01", label: "Глава 01", title: "Демонстрационный фрагмент 01" },
-  { id: "chapter-02", label: "Глава 02", title: "Демонстрационный фрагмент 02" },
-  { id: "chapter-03", label: "Глава 03", title: "Демонстрационный фрагмент 03" },
+const demoChapters: Array<PlayerChapter & { label: string }> = [
+  { id: "chapter-01", label: "Глава 01", title: "Демонстрационный фрагмент 01", durationSeconds: 10 * 60 },
+  { id: "chapter-02", label: "Глава 02", title: "Демонстрационный фрагмент 02", durationSeconds: 12 * 60 },
+  { id: "chapter-03", label: "Глава 03", title: "Демонстрационный фрагмент 03", durationSeconds: 9 * 60 },
 ];
 
+const storageKey = "ozon671:player:tihiy-den";
+
 export default function StoryClient() {
-  const [playing, setPlaying] = useState(false);
-  const [progress, setProgress] = useState(18);
-  const [activeChapter, setActiveChapter] = useState(demoChapters[0].id);
   const [tab, setTab] = useState<"chapters" | "media" | "world">("chapters");
-
-  useEffect(() => {
-    const restoreTimer = window.setTimeout(() => {
-      const saved = window.localStorage.getItem(storageKey);
-      if (!saved) return;
-      try {
-        const value = JSON.parse(saved) as { progress?: number; chapter?: string };
-        if (typeof value.progress === "number") setProgress(Math.min(100, Math.max(0, value.progress)));
-        if (value.chapter && demoChapters.some((chapter) => chapter.id === value.chapter)) setActiveChapter(value.chapter);
-      } catch {
-        window.localStorage.removeItem(storageKey);
-      }
-    }, 0);
-    return () => window.clearTimeout(restoreTimer);
-  }, []);
-
-  useEffect(() => {
-    window.localStorage.setItem(storageKey, JSON.stringify({ progress, chapter: activeChapter }));
-  }, [progress, activeChapter]);
-
-  useEffect(() => {
-    if (!playing) return;
-    const timer = window.setInterval(() => setProgress((value) => Math.min(100, value + 0.25)), 1200);
-    return () => window.clearInterval(timer);
-  }, [playing]);
-
-  const chooseChapter = (id: string) => {
-    setActiveChapter(id);
-    setProgress(0);
-    setPlaying(true);
-  };
+  const player = useLocalPlayer(storageKey, demoChapters);
+  const activeChapter = demoChapters[player.chapterIndex];
 
   return (
     <main className="story-page">
@@ -63,7 +33,7 @@ export default function StoryClient() {
             {quietDan.formats.map((format) => <span className="ds-pill" key={format}>{format}</span>)}
           </div>
           <div className="story-actions">
-            <button className="ds-button ds-button--primary" type="button" onClick={() => setPlaying(!playing)}>{playing ? "Ⅱ Пауза" : "▶ Слушать"}</button>
+            <button className="ds-button ds-button--primary" type="button" onClick={() => player.setPlaying(!player.playing)}>{player.playing ? "Ⅱ Пауза" : "▶ Слушать"}</button>
             <button className="ds-button ds-button--ghost" type="button" onClick={() => setTab("media")}>Смотреть материалы</button>
           </div>
         </div>
@@ -78,12 +48,41 @@ export default function StoryClient() {
 
       <section className="story-player ds-panel" aria-label="Аудиоплеер">
         <div className="story-player-cover">TD</div>
-        <div className="story-player-copy"><small>Сейчас выбрано</small><strong>{demoChapters.find((chapter) => chapter.id === activeChapter)?.title}</strong><span>DEMO · реальный аудиофайл будет подключён после подтверждения прав</span></div>
-        <button className="story-skip" type="button" onClick={() => setProgress((value) => Math.max(0, value - 4))}>−15</button>
-        <button className="story-play" type="button" onClick={() => setPlaying(!playing)} aria-label={playing ? "Пауза" : "Воспроизвести"}>{playing ? "Ⅱ" : "▶"}</button>
-        <button className="story-skip" type="button" onClick={() => setProgress((value) => Math.min(100, value + 4))}>+15</button>
-        <div className="story-progress"><div><i style={{ width: `${progress}%` }} /></div><span>{Math.round(progress)}% · сохраняется локально</span></div>
+        <div className="story-player-copy">
+          <small>Сейчас выбрано · DEMO</small>
+          <strong>{activeChapter?.title}</strong>
+          <span>Реальный аудиофайл будет подключён только после подтверждения прав.</span>
+        </div>
+        <div className="story-player-main-controls">
+          <button className="story-mini-control" type="button" onClick={player.previousChapter} aria-label="Предыдущая глава">‹|</button>
+          <button className="story-skip" type="button" onClick={() => player.seek(-15)} aria-label="Назад на 15 секунд">−15</button>
+          <button className="story-play" type="button" onClick={() => player.setPlaying(!player.playing)} aria-label={player.playing ? "Пауза" : "Воспроизвести"}>{player.playing ? "Ⅱ" : "▶"}</button>
+          <button className="story-skip" type="button" onClick={() => player.seek(15)} aria-label="Вперёд на 15 секунд">+15</button>
+          <button className="story-mini-control" type="button" onClick={player.nextChapter} aria-label="Следующая глава">|›</button>
+        </div>
+        <div className="story-progress story-progress--full">
+          <input
+            type="range"
+            min="0"
+            max="100"
+            step="0.1"
+            value={player.progressPercent}
+            onChange={(event) => player.seekToPercent(Number(event.target.value))}
+            aria-label="Позиция воспроизведения"
+          />
+          <div className="story-progress-meta">
+            <span>{formatPlayerTime(player.positionSeconds)} / {formatPlayerTime(player.durationSeconds)} · демо-таймлайн</span>
+            <span>{Math.round(player.progressPercent)}% · localStorage</span>
+          </div>
+        </div>
         <span className="story-rec">REC</span>
+      </section>
+
+      <section className="player-options" aria-label="Настройки плеера">
+        <button type="button" className="player-option" onClick={player.cyclePlaybackRate}><small>Скорость</small><strong>{player.playbackRate}×</strong></button>
+        <label className="player-option player-option--range"><small>Громкость</small><input type="range" min="0" max="1" step="0.05" value={player.volume} onChange={(event) => player.setVolume(Number(event.target.value))} aria-label="Громкость" /><strong>{Math.round(player.volume * 100)}%</strong></label>
+        <label className="player-option"><small>Таймер сна</small><select value={player.sleepMinutes ?? "off"} onChange={(event) => player.setSleepTimer(event.target.value === "off" ? null : Number(event.target.value))} aria-label="Таймер сна"><option value="off">Выкл.</option><option value="15">15 мин</option><option value="30">30 мин</option><option value="45">45 мин</option><option value="60">60 мин</option></select></label>
+        <div className="player-shortcuts"><small>Клавиши</small><span><kbd>Space</kbd> play/pause · <kbd>←</kbd>/<kbd>→</kbd> ±15 сек</span></div>
       </section>
 
       <section className="story-body">
@@ -94,10 +93,10 @@ export default function StoryClient() {
         </nav>
 
         {tab === "chapters" && <div className="story-tab-panel">
-          <div className="story-section-head"><div><div className="ds-kicker">Audio log / Demo</div><h2>Главы</h2></div><p>Названия ниже — интерфейсные заглушки, а не официальные названия глав.</p></div>
+          <div className="story-section-head"><div><div className="ds-kicker">Audio log / Demo</div><h2>Главы</h2></div><p>Названия и длительности ниже — только интерфейсные демо-данные, а не официальные сведения.</p></div>
           <div className="chapter-list">
-            {demoChapters.map((chapter, index) => <button type="button" className={activeChapter === chapter.id ? "chapter-row active" : "chapter-row"} key={chapter.id} onClick={() => chooseChapter(chapter.id)}>
-              <span>{String(index + 1).padStart(2, "0")}</span><div><small>{chapter.label}</small><strong>{chapter.title}</strong></div><i>{activeChapter === chapter.id && playing ? "Ⅱ" : "▶"}</i>
+            {demoChapters.map((chapter, index) => <button type="button" className={player.chapterIndex === index ? "chapter-row active" : "chapter-row"} key={chapter.id} onClick={() => player.selectChapter(index)}>
+              <span>{String(index + 1).padStart(2, "0")}</span><div><small>{chapter.label} · demo {formatPlayerTime(chapter.durationSeconds)}</small><strong>{chapter.title}</strong></div><i>{player.chapterIndex === index && player.playing ? "Ⅱ" : "▶"}</i>
             </button>)}
           </div>
         </div>}

@@ -36,6 +36,7 @@ jobs:
 
       - name: Verify static export
         run: |
+          set -x
           test -f dist/client/index.html
           test -f dist/client/audiobooks.html
           test -f dist/client/films.html

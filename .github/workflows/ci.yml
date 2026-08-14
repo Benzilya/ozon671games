@@ -44,7 +44,9 @@ jobs:
           test -f dist/client/universe.html
           test -f dist/client/shop.html
           test -f dist/client/account.html
+          test -f dist/client/admin.html
           test -f dist/client/stories/tihiy-den.html
+          test -f docs/CMS_CONTRACT.md
           test -f dist/client/favicon.svg
           test -f dist/client/og.png
           test -d dist/client/_next/static/css

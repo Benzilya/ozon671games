@@ -43,6 +43,7 @@ jobs:
           test -f dist/client/timeline.html
           test -f dist/client/universe.html
           test -f dist/client/shop.html
+          test -f dist/client/account.html
           test -f dist/client/stories/tihiy-den.html
           test -f dist/client/favicon.svg
           test -f dist/client/og.png

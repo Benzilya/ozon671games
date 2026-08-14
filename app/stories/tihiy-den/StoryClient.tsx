@@ -17,15 +17,18 @@ export default function StoryClient() {
   const [tab, setTab] = useState<"chapters" | "media" | "world">("chapters");
 
   useEffect(() => {
-    const saved = window.localStorage.getItem(storageKey);
-    if (!saved) return;
-    try {
-      const value = JSON.parse(saved) as { progress?: number; chapter?: string };
-      if (typeof value.progress === "number") setProgress(Math.min(100, Math.max(0, value.progress)));
-      if (value.chapter && demoChapters.some((chapter) => chapter.id === value.chapter)) setActiveChapter(value.chapter);
-    } catch {
-      window.localStorage.removeItem(storageKey);
-    }
+    const restoreTimer = window.setTimeout(() => {
+      const saved = window.localStorage.getItem(storageKey);
+      if (!saved) return;
+      try {
+        const value = JSON.parse(saved) as { progress?: number; chapter?: string };
+        if (typeof value.progress === "number") setProgress(Math.min(100, Math.max(0, value.progress)));
+        if (value.chapter && demoChapters.some((chapter) => chapter.id === value.chapter)) setActiveChapter(value.chapter);
+      } catch {
+        window.localStorage.removeItem(storageKey);
+      }
+    }, 0);
+    return () => window.clearTimeout(restoreTimer);
   }, []);
 
   useEffect(() => {

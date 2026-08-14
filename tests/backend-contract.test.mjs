@@ -20,6 +20,22 @@ test("admin writes start safe and enforce the rights publication gate", () => {
   assert.match(worker, /error: "rights_gate"/);
 });
 
+test("R2 assets are registered unverified and uploaded only through admin API", () => {
+  assert.match(worker, /url: `r2:\/\/\$\{key\}`/);
+  assert.match(worker, /rightsStatus: "unverified"/);
+  assert.match(worker, /\/api\\\/admin\\\/media\\\//);
+  assert.match(worker, /env\.MEDIA\.put\(key, request\.body/);
+  assert.match(worker, /content_type_mismatch/);
+});
+
+test("public media requires cleared rights and a published reference", () => {
+  assert.match(worker, /eq\(schema\.assets\.rightsStatus, "cleared"\)/);
+  assert.match(worker, /assetHasPublicReference\(db, assetId\)/);
+  assert.match(worker, /eq\(schema\.works\.publicationStatus, "published"\)/);
+  assert.match(worker, /eq\(schema\.works\.rightsStatus, "cleared"\)/);
+  assert.match(worker, /x-content-type-options/);
+});
+
 test("public API does not accept anonymous writes", () => {
   assert.match(worker, /error: "method_not_allowed"/);
   assert.match(worker, /allow: "GET, HEAD, OPTIONS"/);
@@ -30,4 +46,6 @@ test("backend documentation keeps admin and user auth separate", () => {
   assert.match(docs, /не пользовательская система входа/);
   assert.match(docs, /User auth boundary/);
   assert.match(docs, /ADMIN_ALLOWED_ORIGIN/);
+  assert.match(docs, /GET\s+\/api\/media\/:assetId/);
+  assert.match(docs, /не открывает bucket напрямую/);
 });

@@ -1,0 +1,54 @@
+/* Browser QA corrections: keep the editorial palette while meeting readable contrast. */
+.archive-home .cover-dossier span,
+.archive-home .tape-copy small,
+.archive-home .editorial-heading span {
+  color: #aaa398;
+}
+
+.archive-home .tape-copy span {
+  color: #b6aea2;
+}
+
+.story-page .story-player-copy small,
+.story-page .story-player-copy span,
+.story-page .story-progress-meta {
+  color: #4b443c;
+}
+
+.admin-page .admin-flow span {
+  color: #e36b60;
+}
+
+.legal-page .legal-header a,
+.legal-page .legal-header span,
+.legal-page .legal-hero small,
+.legal-page .legal-grid article > span {
+  color: #aaa398;
+}
+
+@media (max-width: 720px) {
+  .shop-page .shop-hero h1 {
+    max-width: 100%;
+    font-size: clamp(44px, 13vw, 58px);
+    overflow-wrap: anywhere;
+  }
+
+  .shop-page .shop-featured,
+  .shop-page .shop-catalog,
+  .shop-page .shop-service,
+  .shop-page .shop-footer {
+    min-width: 0;
+  }
+
+  .shop-page .shop-card,
+  .shop-page .shop-card-copy,
+  .shop-page .shop-card-bottom,
+  .shop-page .shop-featured > *,
+  .shop-page .shop-section-head > * {
+    min-width: 0;
+  }
+
+  .shop-page .shop-card-bottom {
+    flex-wrap: wrap;
+  }
+}

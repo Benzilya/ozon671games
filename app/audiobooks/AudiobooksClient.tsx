@@ -33,12 +33,23 @@ export default function AudiobooksClient() {
     }
 
     const urlQuery = new URLSearchParams(window.location.search).get("q")?.trim();
-    setQuery(urlQuery || saved.query || "");
-    setGenre(saved.genre && allGenres.includes(saved.genre) ? saved.genre : "Все жанры");
-    setStatus(saved.status || "Все статусы");
-    setFormat(saved.format || "Все форматы");
-    setView(saved.view === "list" ? "list" : "grid");
-    setHydrated(true);
+    const next: SavedFilters = {
+      query: urlQuery || saved.query || "",
+      genre: saved.genre && allGenres.includes(saved.genre) ? saved.genre : "Все жанры",
+      status: saved.status || "Все статусы",
+      format: saved.format || "Все форматы",
+      view: saved.view === "list" ? "list" : "grid",
+    };
+
+    const timer = window.setTimeout(() => {
+      setQuery(next.query);
+      setGenre(next.genre);
+      setStatus(next.status);
+      setFormat(next.format);
+      setView(next.view);
+      setHydrated(true);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {

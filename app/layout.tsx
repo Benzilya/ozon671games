@@ -4,6 +4,7 @@ import { siteUrl } from "./seo";
 import "./globals.css";
 import "./navigation.css";
 import "./accessibility.css";
+import "./performance.css";
 
 const publicBase = process.env.GITHUB_ACTIONS === "true" ? "/ozon671games" : "";
 

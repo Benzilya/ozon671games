@@ -1,0 +1,36 @@
+.content-section,
+.cinema-section,
+.collector-section,
+.community-section,
+.account-section,
+.shop-section,
+.universe-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 720px;
+}
+
+@media (max-width: 760px) {
+  .content-section,
+  .cinema-section,
+  .collector-section,
+  .community-section,
+  .account-section,
+  .shop-section,
+  .universe-section {
+    contain-intrinsic-size: 960px;
+  }
+}
+
+@media (prefers-reduced-data: reduce) {
+  .film-grain,
+  .rain-field,
+  .story-rain,
+  .city-glow,
+  .tail-light {
+    display: none !important;
+  }
+
+  * {
+    box-shadow: none !important;
+  }
+}

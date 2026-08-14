@@ -34,6 +34,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Bundle budget
+        run: npm run check:budget
+
       - name: Verify static export
         run: |
           test -f dist/client/index.html
@@ -82,4 +85,6 @@ jobs:
           grep -q ':focus-visible' app/accessibility.css
           grep -q 'prefers-reduced-motion' app/accessibility.css
           grep -q 'min-height: 44px' app/accessibility.css
-          echo "Static export, SEO, accessibility contracts, routed navigation and GitHub Pages asset paths are valid."
+          grep -q 'content-visibility: auto' app/performance.css
+          grep -q 'prefers-reduced-data' app/performance.css
+          echo "Static export, SEO, accessibility, performance contracts, routed navigation and GitHub Pages asset paths are valid."

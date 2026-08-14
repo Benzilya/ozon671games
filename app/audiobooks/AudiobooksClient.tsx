@@ -1,10 +1,19 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { stories } from "../data/stories";
 
 const allGenres = ["Все жанры", ...Array.from(new Set(stories.map((story) => story.genre)))];
 const publicBase = process.env.GITHUB_ACTIONS === "true" ? "/ozon671games" : "";
+const storageKey = "ozon671:catalog-filters";
+
+type SavedFilters = {
+  query: string;
+  genre: string;
+  status: string;
+  format: string;
+  view: "grid" | "list";
+};
 
 export default function AudiobooksClient() {
   const [query, setQuery] = useState("");
@@ -12,6 +21,42 @@ export default function AudiobooksClient() {
   const [status, setStatus] = useState("Все статусы");
   const [format, setFormat] = useState("Все форматы");
   const [view, setView] = useState<"grid" | "list">("grid");
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    let saved: Partial<SavedFilters> = {};
+    try {
+      const raw = window.localStorage.getItem(storageKey);
+      if (raw) saved = JSON.parse(raw) as Partial<SavedFilters>;
+    } catch {
+      window.localStorage.removeItem(storageKey);
+    }
+
+    const urlQuery = new URLSearchParams(window.location.search).get("q")?.trim();
+    const next: SavedFilters = {
+      query: urlQuery || saved.query || "",
+      genre: saved.genre && allGenres.includes(saved.genre) ? saved.genre : "Все жанры",
+      status: saved.status || "Все статусы",
+      format: saved.format || "Все форматы",
+      view: saved.view === "list" ? "list" : "grid",
+    };
+
+    const timer = window.setTimeout(() => {
+      setQuery(next.query);
+      setGenre(next.genre);
+      setStatus(next.status);
+      setFormat(next.format);
+      setView(next.view);
+      setHydrated(true);
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    const payload: SavedFilters = { query, genre, status, format, view };
+    window.localStorage.setItem(storageKey, JSON.stringify(payload));
+  }, [format, genre, hydrated, query, status, view]);
 
   const filtered = useMemo(() => stories.filter((story) => {
     const matchesQuery = `${story.title} ${story.genre}`.toLowerCase().includes(query.toLowerCase());
@@ -20,6 +65,15 @@ export default function AudiobooksClient() {
     const matchesFormat = format === "Все форматы" || story.formats.includes(format);
     return matchesQuery && matchesGenre && matchesStatus && matchesFormat;
   }), [query, genre, status, format]);
+
+  const resetFilters = () => {
+    setQuery("");
+    setGenre("Все жанры");
+    setStatus("Все статусы");
+    setFormat("Все форматы");
+    window.localStorage.removeItem(storageKey);
+    if (window.location.search) window.history.replaceState({}, "", window.location.pathname);
+  };
 
   return (
     <main className="catalog-page">
@@ -31,18 +85,18 @@ export default function AudiobooksClient() {
       </section>
 
       <section className="catalog-tools" aria-label="Фильтры каталога">
-        <label className="catalog-search"><span>⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Название или жанр" /></label>
+        <label className="catalog-search"><span aria-hidden="true">⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Название или жанр" aria-label="Название или жанр" /></label>
         <select value={genre} onChange={(event) => setGenre(event.target.value)} aria-label="Жанр">{allGenres.map((item) => <option key={item}>{item}</option>)}</select>
         <select value={status} onChange={(event) => setStatus(event.target.value)} aria-label="Статус"><option>Все статусы</option><option>Статус не подтверждён</option><option>Завершено</option><option>Продолжается</option></select>
         <select value={format} onChange={(event) => setFormat(event.target.value)} aria-label="Формат"><option>Все форматы</option><option>Аудио</option><option>Видео</option><option>Книга</option></select>
         <div className="view-toggle" aria-label="Режим отображения">
-          <button type="button" className={view === "grid" ? "active" : ""} onClick={() => setView("grid")}>▦</button>
-          <button type="button" className={view === "list" ? "active" : ""} onClick={() => setView("list")}>☷</button>
+          <button type="button" className={view === "grid" ? "active" : ""} aria-pressed={view === "grid"} onClick={() => setView("grid")} aria-label="Сетка">▦</button>
+          <button type="button" className={view === "list" ? "active" : ""} aria-pressed={view === "list"} onClick={() => setView("list")} aria-label="Список">☷</button>
         </div>
       </section>
 
       <section className="catalog-results">
-        <div className="catalog-summary"><span className="ds-kicker">Найдено / {filtered.length}</span><button type="button" onClick={() => { setQuery(""); setGenre("Все жанры"); setStatus("Все статусы"); setFormat("Все форматы"); }}>Сбросить фильтры</button></div>
+        <div className="catalog-summary"><span className="ds-kicker" aria-live="polite">Найдено / {filtered.length}</span><button type="button" onClick={resetFilters}>Сбросить фильтры</button></div>
 
         <div className={`catalog-items catalog-items--${view}`}>
           {filtered.map((story, index) => (

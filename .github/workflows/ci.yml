@@ -40,6 +40,7 @@ jobs:
       - name: Verify static export
         run: |
           test -f dist/client/index.html
+          test -f dist/client/search.html
           test -f dist/client/audiobooks.html
           test -f dist/client/films.html
           test -f dist/client/characters.html
@@ -62,6 +63,7 @@ jobs:
           test ! -d dist/client/ozon671games/_next
           grep -q '/ozon671games/_next/static/css/' dist/client/index.html
           grep -q '/ozon671games/_next/static/chunks/' dist/client/index.html
+          grep -q '/ozon671games/search.html' dist/client/index.html
           grep -q '/ozon671games/audiobooks.html' dist/client/index.html
           grep -q '/ozon671games/films.html' dist/client/index.html
           grep -q '/ozon671games/characters.html' dist/client/index.html
@@ -87,4 +89,7 @@ jobs:
           grep -q 'min-height: 44px' app/accessibility.css
           grep -q 'content-visibility: auto' app/performance.css
           grep -q 'prefers-reduced-data' app/performance.css
-          echo "Static export, SEO, accessibility, performance contracts, routed navigation and GitHub Pages asset paths are valid."
+          grep -q 'ozon671:catalog-filters' app/audiobooks/AudiobooksClient.tsx
+          grep -q 'aria-live="polite"' app/search/SearchClient.tsx
+          grep -q 'URLSearchParams' app/search/SearchClient.tsx
+          echo "Static export, global search, filters, SEO, accessibility, performance and routed navigation contracts are valid."

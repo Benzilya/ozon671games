@@ -1,0 +1,38 @@
+name: Browser quality gates
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  browser-quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.13.0
+          cache: npm
+
+      - name: Install project dependencies
+        run: npm ci
+
+      - name: Build static export
+        run: npm run build
+
+      - name: Install pinned browser QA packages
+        run: npm install --no-save --package-lock=false playwright@1.60.0 @axe-core/playwright@4.12.1
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run browser performance and accessibility gates
+        run: node scripts/browser-quality.mjs

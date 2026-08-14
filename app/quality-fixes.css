@@ -1,0 +1,116 @@
+/* Browser QA corrections: keep the editorial palette while meeting readable contrast. */
+.archive-home .cover-dossier span,
+.archive-home .tape-copy small,
+.archive-home .editorial-heading span,
+.archive-home .cover-caption,
+.archive-home .case-number,
+.archive-home .case-name small,
+.archive-home .archive-wide-link > span,
+.archive-home .screening-copy > span,
+.archive-home .print-copy > span,
+.archive-home .print-copy dt,
+.archive-home .archive-footer > div > span,
+.archive-home .archive-footer > span {
+  color: #aaa398;
+}
+
+.archive-home .fan-title > span,
+.archive-home .fan-title > em {
+  color: #fff4e8 !important;
+}
+
+.archive-home .archive-footer > p {
+  color: #d9d1c5 !important;
+}
+
+.archive-home .tape-copy span {
+  color: #b6aea2;
+}
+
+.archive-home .cover-stamp,
+.archive-home .tape-id,
+.archive-home .warning-line {
+  color: #f07a70;
+  border-color: #c64b41;
+}
+
+.archive-home .evidence-note small {
+  color: #4d463e;
+}
+
+.story-page .story-player-copy small,
+.story-page .story-player-copy span,
+.story-page .story-progress-meta,
+.story-page .story-progress-meta > span {
+  color: #4b443c !important;
+}
+
+.story-page .player-option small,
+.story-page .player-shortcuts small,
+.story-page .story-tabs button,
+.story-page .chapter-row > span,
+.story-page .chapter-row small,
+.story-page .story-footer,
+.story-page .story-footer > span,
+.story-page .story-footer > p {
+  color: #aaa398;
+}
+
+.story-page .story-quote-band {
+  background: #7f211a !important;
+}
+
+.story-page .story-quote-band > small,
+.story-page .story-quote-band > span {
+  color: #fff !important;
+}
+
+.story-page .story-tabs button.active {
+  color: #eee6da;
+}
+
+.admin-page .admin-flow span,
+.admin-page .admin-backend article strong {
+  color: #e36b60;
+}
+
+.legal-page .legal-header a,
+.legal-page .legal-header span,
+.legal-page .legal-hero small,
+.legal-page .legal-grid article > span,
+.legal-page .legal-footer,
+.legal-page .legal-footer > span {
+  color: #aaa398;
+}
+
+.legal-page .legal-grid code,
+.legal-page .legal-draft strong {
+  color: #e36b60;
+}
+
+@media (max-width: 720px) {
+  .shop-page .shop-hero h1 {
+    max-width: 100%;
+    font-size: clamp(44px, 13vw, 58px);
+    overflow-wrap: anywhere;
+  }
+
+  .shop-page .shop-featured,
+  .shop-page .shop-catalog,
+  .shop-page .shop-service,
+  .shop-page .shop-footer {
+    min-width: 0;
+  }
+
+  .shop-page .shop-card,
+  .shop-page .shop-card-copy,
+  .shop-page .shop-card-bottom,
+  .shop-page .shop-featured > *,
+  .shop-page .shop-section-head > * {
+    min-width: 0;
+  }
+
+  .shop-page .shop-card-bottom {
+    flex-wrap: wrap;
+  }
+}

@@ -1,0 +1,392 @@
+/* Editorial Noir v2 — visual layer only. Keeps existing product logic intact. */
+:root {
+  --ink-950: #050505;
+  --ink-900: #090909;
+  --ink-850: #10100f;
+  --ink-800: #151513;
+  --ink-750: #1c1b18;
+  --paper: #e9e4d8;
+  --paper-warm: #d8d0bf;
+  --muted: #969187;
+  --muted-2: #68645c;
+  --signal: #b92e24;
+  --signal-hot: #dc392b;
+  --cold: #8fa2aa;
+  --line: rgba(233, 228, 216, .16);
+  --line-strong: rgba(233, 228, 216, .34);
+  --shadow: 0 28px 70px rgba(0,0,0,.52);
+  --radius-sm: 0px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --display: "Arial Narrow", "Nimbus Sans Narrow", "Liberation Sans Narrow", Impact, sans-serif;
+  --editorial: Georgia, "Times New Roman", serif;
+  --body: "Helvetica Neue", Arial, sans-serif;
+  --mono: "Courier New", Courier, monospace;
+}
+
+html { background:#070706; }
+body {
+  background:
+    linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px),
+    radial-gradient(circle at 84% -8%, rgba(134,145,146,.12), transparent 34rem),
+    #090909;
+  background-size: 100% 5px, auto, auto;
+  color:var(--paper);
+  letter-spacing:.002em;
+}
+
+body::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:999;
+  pointer-events:none;
+  opacity:.055;
+  mix-blend-mode:screen;
+  background-image:repeating-radial-gradient(circle at 0 0, #fff 0 1px, transparent 1px 4px);
+  background-size:5px 5px;
+}
+
+::selection { background:var(--paper); color:#090909; }
+
+/* Typography: deliberately editorial, not dashboard-like. */
+h1, h2, h3 { text-wrap:balance; }
+p { text-wrap:pretty; }
+.ds-section-title,
+.catalog-hero h1,
+.films-hero h1,
+.characters-hero h1,
+.timeline-hero h1,
+.universe-hero h1,
+.shop-hero h1,
+.community-hero h1,
+.account-hero h1,
+.admin-hero h1,
+.global-search-hero h1,
+.story-hero h1 {
+  font-family:var(--editorial);
+  font-weight:700;
+  font-style:italic;
+  letter-spacing:-.055em;
+  text-transform:none;
+}
+
+.ds-section-title { line-height:.92; }
+.ds-kicker,
+.case-label {
+  color:#aaa397;
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:.19em;
+}
+.case-label::before {
+  width:34px;
+  height:1px;
+  background:var(--signal-hot);
+  box-shadow:none;
+}
+
+/* Flat archive components instead of generic rounded SaaS cards. */
+.ds-panel {
+  position:relative;
+  border:1px solid var(--line);
+  border-radius:2px;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.028), transparent 22%),
+    #10100f;
+  box-shadow:0 20px 55px rgba(0,0,0,.34);
+}
+.ds-panel::after {
+  content:"";
+  position:absolute;
+  inset:7px;
+  pointer-events:none;
+  border:1px solid rgba(233,228,216,.025);
+}
+
+.ds-button {
+  min-height:46px;
+  border-radius:0;
+  padding:0 18px;
+  font:700 10px var(--mono);
+  letter-spacing:.105em;
+  text-transform:uppercase;
+  clip-path:polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+}
+.ds-button:hover { transform:translate(-2px,-2px); }
+.ds-button--primary { background:var(--signal); }
+.ds-button--ghost { background:#0b0b0a; border-color:var(--line-strong); }
+
+.ds-pill {
+  min-height:25px;
+  padding:0 8px;
+  border-radius:0;
+  background:transparent;
+  color:#b9b2a7;
+  font-size:8px;
+}
+.ds-pill--signal {
+  border-color:rgba(185,46,36,.7);
+  background:rgba(185,46,36,.08);
+}
+
+/* Header: magazine masthead / archive index. */
+.site-header {
+  height:72px;
+  background:rgba(7,7,6,.91);
+  border-bottom:1px solid rgba(233,228,216,.25);
+  backdrop-filter:blur(9px);
+}
+.brand { gap:13px; }
+.brand__mark {
+  width:48px;
+  height:30px;
+  border:1px solid var(--signal-hot);
+  border-radius:0;
+  color:var(--paper);
+  box-shadow:none;
+  font-size:11px;
+  position:relative;
+}
+.brand__mark::after {
+  content:"ARCHIVE";
+  position:absolute;
+  top:33px;
+  left:0;
+  color:#716c64;
+  font:600 6px var(--mono);
+  letter-spacing:.18em;
+}
+.brand__copy { color:#a9a49b; }
+.brand__copy b { color:var(--paper); }
+.site-nav { gap:4px; }
+.site-nav a {
+  padding:8px 10px;
+  color:#a8a39a;
+  font:700 9px var(--mono);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  border-left:1px solid transparent;
+}
+.site-nav a:hover { color:var(--paper); border-left-color:var(--signal); }
+.search-box {
+  height:36px;
+  border-radius:0;
+  background:#0a0a09;
+  border-color:rgba(233,228,216,.25);
+}
+.icon-button,.menu-button,.round-control {
+  border-radius:0;
+  background:#0a0a09;
+}
+
+/* Hero: printed crime cover laid over a wet night scene. */
+.noir-hero {
+  min-height:780px;
+  padding-top:110px;
+  background:#060606;
+}
+.noir-hero::before {
+  background:
+    linear-gradient(90deg, rgba(5,5,5,.98) 0%, rgba(5,5,5,.88) 38%, rgba(5,5,5,.30) 70%, rgba(5,5,5,.68) 100%),
+    radial-gradient(circle at 72% 24%, rgba(150,171,177,.19), transparent 20rem);
+}
+.noir-hero::after {
+  content:"NO. 0671  /  NIGHT ARCHIVE";
+  position:absolute;
+  left:var(--page-gutter);
+  bottom:28px;
+  z-index:14;
+  color:#777169;
+  font:700 8px var(--mono);
+  letter-spacing:.25em;
+}
+.rain-field { opacity:.23; }
+.film-grain { opacity:.19; }
+.hero-copy { width:min(760px,64%); }
+.hero-copy h1 {
+  margin:24px 0 30px;
+  font-family:var(--display);
+  font-size:clamp(96px,13vw,204px);
+  font-weight:900;
+  letter-spacing:-.075em;
+  line-height:.66;
+  text-shadow:none;
+}
+.hero-copy h1 span {
+  margin-left:0;
+  margin-top:.10em;
+  color:var(--signal-hot);
+  -webkit-text-stroke:0;
+  transform:translateX(clamp(12px,5vw,72px));
+  position:relative;
+}
+.hero-copy h1 span::before {
+  content:"FILE / 01";
+  position:absolute;
+  top:-12px;
+  left:4px;
+  color:#9c958b;
+  font:700 7px var(--mono);
+  letter-spacing:.22em;
+}
+.hero-copy > p {
+  max-width:500px;
+  color:#c4beb2;
+  font-family:var(--editorial);
+  font-size:clamp(15px,1.4vw,19px);
+  line-height:1.62;
+}
+.hero-badges { margin-top:29px; }
+.hero-file {
+  border-left:0;
+  border-top:1px solid var(--signal);
+  padding:12px 0 0;
+  color:#827d74;
+}
+.city-glow { opacity:.7; }
+.block { filter:grayscale(.4); }
+.wet-road::after { background:linear-gradient(90deg,transparent,rgba(185,46,36,.27) 70%,transparent); }
+
+/* Resume strip becomes evidence tape rather than floating app card. */
+.resume-panel {
+  margin:-1px var(--page-gutter) 0;
+  border-top:3px solid var(--signal);
+  box-shadow:none;
+  background:#0d0d0c;
+}
+.resume-cover { border-radius:0; background:#19100e; }
+.resume-track { height:2px; background:#282623; }
+.resume-track i { box-shadow:none; background:var(--signal); }
+
+/* Library resembles contact sheets / case folders. */
+.content-section { border-top:1px solid rgba(233,228,216,.08); }
+.section-heading { align-items:flex-start; }
+.section-heading > div { position:relative; }
+.section-heading > div::after {
+  content:"";
+  display:block;
+  width:78px;
+  height:1px;
+  margin-top:20px;
+  background:var(--signal);
+}
+.section-heading p { font-family:var(--editorial); font-size:13px; color:#8f897f; }
+.story-grid { gap:12px; }
+.story-card { padding-top:8px; border-top:1px solid rgba(233,228,216,.12); }
+.story-poster {
+  border-radius:0;
+  filter:saturate(.72) contrast(1.06);
+  box-shadow:0 18px 45px rgba(0,0,0,.28);
+}
+.story-poster:hover { transform:translateY(-3px) rotate(-.35deg); }
+.story-poster::after {
+  content:"EVIDENCE";
+  position:absolute;
+  top:12px;
+  right:-20px;
+  transform:rotate(90deg);
+  color:rgba(233,228,216,.26);
+  font:700 6px var(--mono);
+  letter-spacing:.24em;
+}
+.poster-code { font-family:var(--display); color:#eee9dd; }
+.poster-play { border-radius:0; background:var(--paper); }
+.story-card h3 {
+  margin-top:14px;
+  font-family:var(--editorial);
+  font-size:17px;
+  font-style:italic;
+}
+.story-card p { color:#807b72; }
+
+/* Cinema / universe / collector get sharper editorial framing. */
+.cinema-shell { border-left:3px solid var(--signal); }
+.cinema-visual { filter:saturate(.74); }
+.cinema-frame { inset:8%; box-shadow:0 30px 70px #000; }
+.cinema-play { border-radius:0; backdrop-filter:none; }
+.cinema-copy { background:#11110f; }
+.ai-note { background:transparent; border-left:1px solid var(--signal); }
+
+.universe-map { border-radius:0; }
+.universe-map::before { opacity:.6; background-size:36px 36px; }
+.map-node { border-radius:0 !important; font-family:var(--mono) !important; }
+
+.collector-section { background:#0c0c0b !important; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.collector-book { border-radius:1px !important; box-shadow:24px 26px 0 #060606 !important; }
+.collector-copy p,.community-card p { font-family:var(--editorial); }
+
+/* All inner pages receive the same bespoke archive language. */
+.catalog-page,.films-page,.characters-page,.timeline-page,.universe-page,.shop-page,.community-page,.account-page,.admin-page,.global-search-page,.story-page {
+  background:
+    linear-gradient(rgba(255,255,255,.012) 1px, transparent 1px),
+    #090909 !important;
+  background-size:100% 5px,auto !important;
+}
+
+.catalog-hero,.films-hero,.characters-hero,.timeline-hero,.universe-hero,.shop-hero,.community-hero,.account-hero,.admin-hero,.global-search-hero,.story-hero {
+  position:relative;
+  border-bottom:1px solid var(--line-strong);
+}
+.catalog-hero::after,.films-hero::after,.characters-hero::after,.timeline-hero::after,.universe-hero::after,.shop-hero::after,.community-hero::after,.account-hero::after,.admin-hero::after,.global-search-hero::after,.story-hero::after {
+  content:"671 / EDITORIAL ARCHIVE";
+  position:absolute;
+  right:var(--page-gutter);
+  bottom:18px;
+  color:#5f5a53;
+  font:700 7px var(--mono);
+  letter-spacing:.22em;
+}
+
+.catalog-card,.film-card,.character-card,.timeline-card,.universe-card,.shop-card,.community-card,.account-card,.admin-card,.global-search-result {
+  border-radius:0 !important;
+}
+
+.catalog-poster,.film-poster,.character-portrait,.product-art {
+  border-radius:0 !important;
+}
+
+input,select,textarea {
+  border-radius:0 !important;
+  background:#0c0c0b !important;
+}
+
+/* Mobile dock as utilitarian index strip. */
+.mobile-dock {
+  left:0;
+  right:0;
+  bottom:0;
+  height:58px;
+  border-radius:0;
+  border-left:0;
+  border-right:0;
+  border-bottom:0;
+  background:rgba(8,8,7,.98);
+  box-shadow:0 -10px 40px rgba(0,0,0,.32);
+  backdrop-filter:blur(8px);
+}
+.mobile-dock a { border-right:1px solid rgba(233,228,216,.08); }
+.mobile-dock a:last-child { border-right:0; }
+.mobile-dock a span { color:#c8c1b6; }
+
+/* Explicitly avoid over-polished AI/SaaS visual signatures. */
+[class*="card"], [class*="panel"] { backdrop-filter:none; }
+
+@media (max-width: 860px) {
+  .hero-copy { width:100%; }
+  .hero-copy h1 { font-size:clamp(78px,24vw,136px); }
+  .hero-copy h1 span { transform:translateX(10px); }
+  .hero-file { display:none; }
+  .noir-hero { min-height:720px; align-items:flex-end; padding-bottom:95px; }
+  .site-nav { border-radius:0 !important; background:#0b0b0a !important; }
+  .section-heading { display:block; }
+  .section-heading p { margin-top:20px; }
+}
+
+@media (max-width: 560px) {
+  .hero-copy h1 { letter-spacing:-.08em; line-height:.69; }
+  .hero-badges { gap:5px; }
+  .ds-button { width:100%; }
+  .story-grid { gap:18px 10px; }
+  .resume-panel { margin-left:0; margin-right:0; border-left:0; border-right:0; }
+}

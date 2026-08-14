@@ -48,13 +48,15 @@ jobs:
       - name: Generate production Wrangler config
         run: node scripts/write-cloudflare-production-config.mjs
 
-      - name: Validate Worker configuration
-        run: npx wrangler check --config wrangler.production.json
-
       - name: Build Worker and static assets
         env:
           CLOUDFLARE_VITE_WRANGLER_CONFIG_PATH: wrangler.production.json
         run: npm run build
+
+      - name: Dry-run Worker deployment
+        env:
+          CLOUDFLARE_VITE_WRANGLER_CONFIG_PATH: wrangler.production.json
+        run: npx wrangler deploy --dry-run --outdir .wrangler/dry-run
 
       - name: Apply D1 migrations
         run: npx wrangler d1 migrations apply DB --remote --config wrangler.production.json

@@ -1,6 +1,12 @@
-# Этап 14.4 — Cloudflare production activation
+# Этап 14.4 — Активация production-backend в Cloudflare
 
 Этот документ описывает первый реальный запуск backend после подключения Cloudflare-аккаунта. Сам GitHub Pages frontend от этого процесса не зависит.
+
+## Текущий статус
+
+Кодовая часть этапа подготовлена: Worker API, D1 schema/migrations, R2 media flow, admin secret auth, provider-neutral OIDC, production environment validation и smoke checks находятся в репозитории.
+
+Реальный production deploy остаётся заблокирован только внешней инфраструктурой: нужны Cloudflare resources/credentials и параметры выбранного OIDC application/provider.
 
 ## 1. Создать production resources
 
@@ -50,12 +56,14 @@ Workflow: `Deploy Cloudflare backend`.
 
 1. проверяет наличие и синтаксис обязательных Secrets/Variables;
 2. генерирует production Wrangler config;
-3. запускает `wrangler check`;
-4. собирает Worker/static assets через Cloudflare Vite plugin;
+3. собирает Worker/static assets через Cloudflare Vite plugin;
+4. выполняет `wrangler deploy --dry-run`, чтобы проверить фактический deploy bundle без публикации;
 5. применяет D1 migrations к remote database;
 6. деплоит Worker;
 7. устанавливает `ADMIN_API_TOKEN` как Worker secret;
 8. выполняет production smoke check.
+
+Dry-run выполняется после framework build: актуальный Cloudflare Vite plugin формирует deploy-конфигурацию для Wrangler, поэтому именно этот порядок проверяет тот артефакт, который затем будет опубликован.
 
 ## 4. Условия успешного smoke check
 

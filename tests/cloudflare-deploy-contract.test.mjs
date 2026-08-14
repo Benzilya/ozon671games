@@ -27,13 +27,19 @@ test("generated Worker config binds D1, R2, assets, images and OIDC", () => {
   assert.match(generator, /ADMIN_ALLOWED_ORIGIN/);
 });
 
-test("deployment validates configuration before migrations and deploy", () => {
+test("deployment validates environment, builds, dry-runs, migrates and deploys in order", () => {
   const validation = workflow.indexOf("validate-cloudflare-production-env.mjs");
+  const build = workflow.indexOf("npm run build");
+  const dryRun = workflow.indexOf("wrangler deploy --dry-run --outdir .wrangler/dry-run");
   const migrations = workflow.indexOf("wrangler d1 migrations apply DB --remote");
-  const deploy = workflow.indexOf("wrangler deploy");
+  const deploy = workflow.indexOf("run: npx wrangler deploy\n");
+
   assert.ok(validation > -1);
-  assert.ok(migrations > validation);
+  assert.ok(build > validation);
+  assert.ok(dryRun > build);
+  assert.ok(migrations > dryRun);
   assert.ok(deploy > migrations);
+  assert.doesNotMatch(workflow, /wrangler check --config/);
   assert.match(validator, /CF_API_BASE_URL/);
   assert.match(validator, /must use https/);
   assert.match(validator, /OIDC_JWKS_URL/);

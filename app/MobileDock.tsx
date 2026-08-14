@@ -4,7 +4,7 @@ export default function MobileDock() {
   return (
     <nav className="mobile-dock" aria-label="Мобильная навигация">
       <a href={`${publicBase}/`}><span>⌂</span>Главная</a>
-      <a href={`${publicBase}/audiobooks/`}><span>▤</span>Истории</a>
+      <a href={`${publicBase}/audiobooks.html`}><span>▤</span>Истории</a>
       <a href={`${publicBase}/#films`}><span>▶</span>Фильмы</a>
       <a href={`${publicBase}/#world`}><span>◎</span>Мир</a>
       <a href={`${publicBase}/#shop`}><span>▱</span>Магазин</a>

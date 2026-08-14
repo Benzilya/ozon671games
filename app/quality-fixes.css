@@ -6,7 +6,9 @@
 .archive-home .case-number,
 .archive-home .case-name small,
 .archive-home .archive-wide-link > span,
-.archive-home .screening-copy > span {
+.archive-home .screening-copy > span,
+.archive-home .print-copy > span,
+.archive-home .print-copy dt {
   color: #aaa398;
 }
 
@@ -21,9 +23,7 @@
   border-color: #c64b41;
 }
 
-.archive-home .evidence-note small,
-.archive-home .print-copy > span,
-.archive-home dt {
+.archive-home .evidence-note small {
   color: #4d463e;
 }
 
@@ -39,10 +39,15 @@
 .story-page .story-tabs button,
 .story-page .chapter-row > span,
 .story-page .chapter-row small,
-.story-page .story-quote-band > small,
-.story-page .story-quote-band > span,
-.story-page footer > p {
+.story-page .story-footer,
+.story-page .story-footer > span,
+.story-page .story-footer > p {
   color: #aaa398;
+}
+
+.story-page .story-quote-band > small,
+.story-page .story-quote-band > span {
+  color: #fff4e8;
 }
 
 .story-page .story-tabs button.active {

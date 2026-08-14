@@ -4,7 +4,9 @@
 .archive-home .editorial-heading span,
 .archive-home .cover-caption,
 .archive-home .case-number,
-.archive-home .case-name small {
+.archive-home .case-name small,
+.archive-home .archive-wide-link > span,
+.archive-home .screening-copy > span {
   color: #aaa398;
 }
 
@@ -13,9 +15,10 @@
 }
 
 .archive-home .cover-stamp,
-.archive-home .tape-id {
-  color: #df665b;
-  border-color: #b93c32;
+.archive-home .tape-id,
+.archive-home .warning-line {
+  color: #f07a70;
+  border-color: #c64b41;
 }
 
 .story-page .story-player-copy small,
@@ -26,8 +29,14 @@
 }
 
 .story-page .player-option small,
-.story-page .player-shortcuts small {
+.story-page .player-shortcuts small,
+.story-page .story-tabs button,
+.story-page .chapter-row > span {
   color: #aaa398;
+}
+
+.story-page .story-tabs button.active {
+  color: #eee6da;
 }
 
 .admin-page .admin-flow span,
@@ -38,11 +47,14 @@
 .legal-page .legal-header a,
 .legal-page .legal-header span,
 .legal-page .legal-hero small,
-.legal-page .legal-grid article > span {
+.legal-page .legal-grid article > span,
+.legal-page .legal-footer,
+.legal-page .legal-footer > span {
   color: #aaa398;
 }
 
-.legal-page .legal-grid code {
+.legal-page .legal-grid code,
+.legal-page .legal-draft strong {
   color: #e36b60;
 }
 

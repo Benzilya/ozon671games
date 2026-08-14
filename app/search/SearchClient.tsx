@@ -20,7 +20,8 @@ export default function SearchClient() {
 
   useEffect(() => {
     const value = new URLSearchParams(window.location.search).get("q")?.trim() ?? "";
-    setQuery(value);
+    const timer = window.setTimeout(() => setQuery(value), 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   const results = useMemo(() => {
@@ -55,7 +56,6 @@ export default function SearchClient() {
         <label className="global-search-input">
           <span aria-hidden="true">⌕</span>
           <input
-            autoFocus
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Например: Тихий Дэн, мистика, карта"

@@ -1,7 +1,10 @@
 /* Browser QA corrections: keep the editorial palette while meeting readable contrast. */
 .archive-home .cover-dossier span,
 .archive-home .tape-copy small,
-.archive-home .editorial-heading span {
+.archive-home .editorial-heading span,
+.archive-home .cover-caption,
+.archive-home .case-number,
+.archive-home .case-name small {
   color: #aaa398;
 }
 
@@ -9,13 +12,26 @@
   color: #b6aea2;
 }
 
-.story-page .story-player-copy small,
-.story-page .story-player-copy span,
-.story-page .story-progress-meta {
-  color: #4b443c;
+.archive-home .cover-stamp,
+.archive-home .tape-id {
+  color: #df665b;
+  border-color: #b93c32;
 }
 
-.admin-page .admin-flow span {
+.story-page .story-player-copy small,
+.story-page .story-player-copy span,
+.story-page .story-progress-meta,
+.story-page .story-progress-meta > span {
+  color: #4b443c !important;
+}
+
+.story-page .player-option small,
+.story-page .player-shortcuts small {
+  color: #aaa398;
+}
+
+.admin-page .admin-flow span,
+.admin-page .admin-backend article strong {
   color: #e36b60;
 }
 
@@ -24,6 +40,10 @@
 .legal-page .legal-hero small,
 .legal-page .legal-grid article > span {
   color: #aaa398;
+}
+
+.legal-page .legal-grid code {
+  color: #e36b60;
 }
 
 @media (max-width: 720px) {

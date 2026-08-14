@@ -37,6 +37,8 @@ jobs:
       - name: Verify static export
         run: |
           test -f dist/client/index.html
+          test -f dist/client/audiobooks.html
+          test -f dist/client/stories/tihiy-den.html
           test -f dist/client/favicon.svg
           test -f dist/client/og.png
           test -d dist/client/_next/static/css
@@ -46,4 +48,4 @@ jobs:
           test ! -d dist/client/ozon671games/_next
           grep -q '/ozon671games/_next/static/css/' dist/client/index.html
           grep -q '/ozon671games/_next/static/chunks/' dist/client/index.html
-          echo "Static export and GitHub Pages asset paths are valid."
+          echo "Static export, content routes and GitHub Pages asset paths are valid."

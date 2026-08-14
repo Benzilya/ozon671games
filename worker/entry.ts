@@ -26,13 +26,17 @@ interface ExecutionContext {
 }
 
 type BaseWorker = {
-  fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response>;
+  fetch(request: Request, env: Env | undefined, ctx: ExecutionContext): Promise<Response>;
 };
 
 const appWorker = baseWorker as unknown as BaseWorker;
 
 const worker = {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  async fetch(request: Request, env: Env | undefined, ctx: ExecutionContext): Promise<Response> {
+    // vinext prerender invokes the worker without Cloudflare runtime bindings.
+    // Preserve the existing static export path and only route user API when env exists.
+    if (!env) return appWorker.fetch(request, env, ctx);
+
     const url = new URL(request.url);
     const userResponse = await handleUserApi(request, {
       DB: env.DB,

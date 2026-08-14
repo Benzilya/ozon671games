@@ -9,14 +9,18 @@
 .archive-home .screening-copy > span,
 .archive-home .print-copy > span,
 .archive-home .print-copy dt,
-.archive-home .fan-title > span,
 .archive-home .archive-footer > div > span,
 .archive-home .archive-footer > span {
   color: #aaa398;
 }
 
+.archive-home .fan-title > span,
 .archive-home .fan-title > em {
-  color: #f1e8dc;
+  color: #fff4e8 !important;
+}
+
+.archive-home .archive-footer > p {
+  color: #d9d1c5 !important;
 }
 
 .archive-home .tape-copy span {
@@ -50,6 +54,10 @@
 .story-page .story-footer > span,
 .story-page .story-footer > p {
   color: #aaa398;
+}
+
+.story-page .story-quote-band {
+  background: #7f211a !important;
 }
 
 .story-page .story-quote-band > small,

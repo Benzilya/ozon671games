@@ -4,9 +4,13 @@ import "./community.css";
 
 export const dynamic = "force-static";
 
+const description = "Стримы, фан-работы, опросы и каналы сообщества Ozon671Games.";
+
 export const metadata: Metadata = {
   title: "Сообщество — Ozon 671 Stories",
-  description: "Стримы, фан-работы, опросы и каналы сообщества Ozon671Games.",
+  description,
+  alternates: { canonical: "/community.html" },
+  openGraph: { title: "Сообщество — Ozon 671 Stories", description, url: "/community.html" },
 };
 
 export default function CommunityPage() {

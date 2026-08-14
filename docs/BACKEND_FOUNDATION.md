@@ -2,7 +2,7 @@
 
 ## Решение
 
-Backend-слой проекта построен вокруг **Cloudflare Worker + D1 + R2**. Это продолжает уже используемый стек: `worker/index.ts`, Cloudflare Vite plugin, Wrangler, Drizzle ORM и D1 binding `DB` находятся в одном репозитории.
+Backend-слой проекта построен вокруг **Cloudflare Worker + D1 + R2**. Runtime entry — `worker/entry.ts`: он сначала обрабатывает пользовательский OIDC API, а затем передаёт остальные запросы в основной `worker/index.ts`. Cloudflare Vite plugin, Wrangler, Drizzle ORM и D1/R2 bindings остаются в одном репозитории.
 
 GitHub Pages остаётся публичным статическим frontend до момента реального подключения backend. Базовое открытие сайта не зависит от API.
 
@@ -29,23 +29,16 @@ products/<product-slug>/<asset-id>.<ext>
 Реализованный media flow:
 
 ```text
-POST  /api/admin/assets             зарегистрировать asset metadata (всегда unverified)
-PATCH /api/admin/assets/:id         изменить rights/AI/attribution metadata
-PUT   /api/admin/media/:assetId     загрузить бинарный объект в R2
-GET   /api/media/:assetId           публично получить rights-cleared опубликованный asset
-HEAD  /api/media/:assetId           проверить опубликованный asset без тела ответа
+POST  /api/admin/assets
+PATCH /api/admin/assets/:id
+PUT   /api/admin/media/:assetId
+GET   /api/media/:assetId
+HEAD  /api/media/:assetId
 ```
 
 Загрузка защищена `ADMIN_API_TOKEN`. `storageKey` валидируется и не допускает `..`/абсолютные пути. Content-Type сверяется с `asset.kind`. При отсутствующем `MEDIA` endpoint возвращает `503 backend_not_configured`.
 
-Публичная выдача **не открывает bucket напрямую**. Worker сначала проверяет D1 metadata, затем убеждается, что asset:
-
-1. имеет `rights_status = cleared`;
-2. действительно связан с опубликованным произведением, главой, фильмом, персонажем или товаром;
-3. у произведения, если оно участвует в связи, `publication_status = published` и `rights_status = cleared`;
-4. физически существует в R2.
-
-Только после этого Worker отдаёт object body. Ответ получает `X-Content-Type-Options: nosniff`, ETag и публичный cache-control. Это предотвращает публикацию orphan/restricted/unverified файлов только потому, что они оказались загружены в bucket.
+Публичная выдача **не открывает bucket напрямую**. Worker проверяет `rights_status = cleared`, опубликованную связь с произведением/главой/фильмом/персонажем/товаром и физическое наличие объекта в R2. Только затем возвращается тело файла с ETag, cache policy и `X-Content-Type-Options: nosniff`.
 
 ## Rights gate
 
@@ -61,8 +54,6 @@ Admin API дополнительно запрещает перевод прои�
 
 ## Public read API
 
-Реализовано в Worker:
-
 ```text
 GET /api/health
 GET /api/works
@@ -75,11 +66,9 @@ GET /api/links
 GET /api/media/:assetId
 ```
 
-Публичные write-запросы возвращают `405`. Это намеренно: пользовательские записи появятся только вместе с production auth.
-
 ## Admin write API
 
-Административный контур отделён от публичного API и использует server-side secret `ADMIN_API_TOKEN`:
+Административный контур использует отдельный server-side secret `ADMIN_API_TOKEN`:
 
 ```text
 GET   /api/admin/health
@@ -92,48 +81,66 @@ PUT   /api/admin/media/:assetId
 PATCH /api/admin/comments/:id
 ```
 
-Правила:
+Admin token нельзя использовать как пользовательский login. Browser-CMS принимает только точный `ADMIN_ALLOWED_ORIGIN`; token не должен храниться в Git или публичном bundle.
 
-- токен передаётся только как `Authorization: Bearer <token>`;
-- токен нельзя хранить в Git или в публичном frontend bundle;
-- сравнение токена выполняется по SHA-256 digest, чтобы не использовать обычное раннее строковое сравнение;
-- новый work всегда создаётся как `draft + unverified`;
-- новый asset всегда создаётся с `rights_status = unverified`;
-- публикация запрещается rights gate, пока права не переведены в `cleared`;
-- admin responses имеют `cache-control: no-store`;
-- CORS для admin API не открывается через `*`; при browser-CMS нужно задать точный `ADMIN_ALLOWED_ORIGIN`.
+## User authentication — provider-neutral OIDC
 
-Этот bearer-secret — **административная server-to-server/CMS защита**, а не пользовательская система входа. Его нельзя использовать как login для посетителей сайта.
+Пользовательская авторизация теперь имеет готовый provider-neutral backend contract. Проект не привязан в коде к Clerk, Auth0, Supabase или другому конкретному поставщику.
 
-## User auth boundary
+Worker ожидает стандартный **OIDC access token / JWT с RS256** и проверяет:
 
-Будущие маршруты аккаунта остаются отключёнными до выбора и настройки production authentication:
+1. три части JWT;
+2. `alg = RS256` и `kid`;
+3. подпись по ключу из JWKS;
+4. точный `iss`;
+5. `aud`;
+6. обязательный и неистёкший `exp`;
+7. `nbf`, если он присутствует;
+8. обязательный `sub`.
+
+JWKS кэшируется в Worker на короткий срок. Стабильный внутренний `users.id` создаётся как SHA-256 от пары `issuer + subject`, поэтому одинаковые `sub` у разных identity providers не конфликтуют. Email намеренно не используется как первичный идентификатор.
+
+При первом успешном запросе пользователь автоматически создаётся в D1 с ролью `user`. Внешняя identity не может самостоятельно назначить `editor/moderator/admin`.
+
+Реализованные authenticated routes:
 
 ```text
-GET /api/me
-PUT /api/me/progress/:workId
-PUT /api/me/favorites/:workId
+GET  /api/me
+PUT  /api/me/favorites/:workId
+PUT  /api/me/progress/:workId
+POST /api/me/moments
 POST /api/comments
-POST /api/orders
 ```
 
-После подключения auth сервер должен связывать внешнюю identity с `users.id` и проверять роль/владение данными на каждом write-запросе.
+`GET /api/me` возвращает профиль, избранное, прогресс, сохранённые моменты и заказы текущего пользователя. Favorite/progress разрешены только для опубликованных rights-cleared произведений. Комментарии всегда создаются как `pending` и проходят admin moderation.
+
+`POST /api/orders` намеренно не реализован до подключения реального commerce/payment flow — пользовательская авторизация сама по себе не должна превращать демо-корзину в настоящий заказ.
+
+CORS для пользовательского API ограничивается точным `USER_ALLOWED_ORIGIN`; bearer token не сохраняется backend-кодом.
 
 ## Переменные окружения
-
-Backend ожидает:
 
 ```text
 DB                    Cloudflare D1 binding
 MEDIA                 Cloudflare R2 binding
-ADMIN_API_TOKEN       secret, required for /api/admin/*
-ADMIN_ALLOWED_ORIGIN  exact CMS origin, optional until browser CMS activation
+ADMIN_API_TOKEN       secret для /api/admin/*
+ADMIN_ALLOWED_ORIGIN  exact CMS origin
+OIDC_ISSUER           exact expected JWT issuer
+OIDC_AUDIENCE         exact expected API audience
+OIDC_JWKS_URL         HTTPS JWKS endpoint identity provider
+USER_ALLOWED_ORIGIN   exact public frontend origin
 ```
 
 Ни одно значение secret/resource ID не должно коммититься в Git.
 
 ## Что требуется для реального подключения
 
-В `.openai/hosting.json` сейчас реальные D1/R2 resources не provisioned. Для production нужны созданные Cloudflare D1/R2 resources и secret `ADMIN_API_TOKEN`.
+В `.openai/hosting.json` реальные D1/R2 resources пока не provisioned. Для production нужны:
 
-До этого сайт продолжает работать как статический GitHub Pages frontend с локальными demo-state/localStorage механиками, а Worker API остаётся подготовленным к активации.
+- D1 database binding `DB`;
+- R2 bucket binding `MEDIA`;
+- secret `ADMIN_API_TOKEN`;
+- OIDC provider/application, из которого будут получены issuer/audience/JWKS URL;
+- точные CORS origins.
+
+До этого GitHub Pages продолжает работать как статический frontend с локальными demo-state/localStorage механиками. Backend contract уже готов к активации без привязки к конкретному auth-вендору.

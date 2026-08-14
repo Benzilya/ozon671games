@@ -36,9 +36,14 @@ jobs:
 
       - name: Verify static export
         run: |
-          echo "Exported files:"
-          find dist/client -maxdepth 3 -type f | sort | head -100
-          find dist/client -name index.html -type f | grep -q .
-          find dist/client -name favicon.svg -type f | grep -q .
-          find dist/client -name og.png -type f | grep -q .
-          echo "Static export files are present."
+          test -f dist/client/index.html
+          test -f dist/client/favicon.svg
+          test -f dist/client/og.png
+          test -d dist/client/_next/static/css
+          test -d dist/client/_next/static/chunks
+          find dist/client/_next/static/css -type f | grep -q .
+          find dist/client/_next/static/chunks -type f | grep -q .
+          test ! -d dist/client/ozon671games/_next
+          grep -q '/ozon671games/_next/static/css/' dist/client/index.html
+          grep -q '/ozon671games/_next/static/chunks/' dist/client/index.html
+          echo "Static export and GitHub Pages asset paths are valid."

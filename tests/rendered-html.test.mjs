@@ -44,8 +44,13 @@ test("Quiet Dan route exposes player and rights-safe demo language", () => {
   assert.match(html, /−15|\+15/);
   assert.match(html, /Таймер сна/);
   assert.match(html, /localStorage/);
-  assert.match(html, /Создано с помощью ИИ/);
   assert.match(html, /не цитата из произведения/i);
+  assert.match(html, /Реальный аудиофайл будет подключён только после подтверждения прав/);
+});
+
+test("AI films route carries an explicit generative-content disclosure", () => {
+  const html = read("films.html");
+  assert.match(html, /Создано с помощью ИИ|AI-контент|AI-generated|AI GENERATED/i);
 });
 
 test("generated navigation points only to exported same-site HTML routes", () => {

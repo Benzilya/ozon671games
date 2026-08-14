@@ -8,8 +8,15 @@
 .archive-home .archive-wide-link > span,
 .archive-home .screening-copy > span,
 .archive-home .print-copy > span,
-.archive-home .print-copy dt {
+.archive-home .print-copy dt,
+.archive-home .fan-title > span,
+.archive-home .archive-footer > div > span,
+.archive-home .archive-footer > span {
   color: #aaa398;
+}
+
+.archive-home .fan-title > em {
+  color: #f1e8dc;
 }
 
 .archive-home .tape-copy span {
@@ -47,7 +54,7 @@
 
 .story-page .story-quote-band > small,
 .story-page .story-quote-band > span {
-  color: #fff4e8;
+  color: #fff !important;
 }
 
 .story-page .story-tabs button.active {

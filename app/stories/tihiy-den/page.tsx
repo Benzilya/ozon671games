@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import StoryClient from "./StoryClient";
 import "./story.css";
+import "./player.css";
 
 export const dynamic = "force-static";
 

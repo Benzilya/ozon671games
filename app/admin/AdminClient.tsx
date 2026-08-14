@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 
 const publicBase = process.env.GITHUB_ACTIONS === "true" ? "/ozon671games" : "";
 const urlKey = "ozon671:admin-api-url";
@@ -48,21 +48,20 @@ function normalizeApiUrl(value: string) {
   return value.trim().replace(/\/+$/, "");
 }
 
+function sessionValue(key: string) {
+  return typeof window === "undefined" ? "" : window.sessionStorage.getItem(key) ?? "";
+}
+
 export default function AdminClient(){
   const [active,setActive]=useState(sections[0].id);
-  const [apiUrl,setApiUrl]=useState("");
-  const [token,setToken]=useState("");
+  const [apiUrl,setApiUrl]=useState(()=>sessionValue(urlKey));
+  const [token,setToken]=useState(()=>sessionValue(tokenKey));
   const [connected,setConnected]=useState(false);
   const [busy,setBusy]=useState(false);
   const [notice,setNotice]=useState("Backend не подключён");
   const [works,setWorks]=useState<Work[]>([]);
   const [selectedId,setSelectedId]=useState("");
   const [createdAsset,setCreatedAsset]=useState<Asset | null>(null);
-
-  useEffect(()=>{
-    setApiUrl(window.sessionStorage.getItem(urlKey) ?? "");
-    setToken(window.sessionStorage.getItem(tokenKey) ?? "");
-  },[]);
 
   const current=sections.find((item)=>item.id===active)??sections[0];
   const selected=works.find((item)=>item.id===selectedId) ?? works[0] ?? null;
@@ -178,7 +177,7 @@ export default function AdminClient(){
 
       <div className="admin-grid">
         <article className="admin-current ds-panel"><div className="admin-card-top"><small>SELECTED ENTITY</small><span>{counts[current.id as keyof typeof counts]??"—"}</span></div><h2>{current.title}</h2><p>{current.note}</p>
-          {active==="works" ? <WorksConsole connected={connected} works={works} selected={selected} selectedId={selectedId} setSelectedId={setSelectedId} createWork={createWork} patchWork={patchWork} busy={busy}/> : active==="media" ? <MediaConsole connected={connected} createdAsset={createdAsset} createAsset={createAsset} uploadAsset={uploadAsset} patchAsset={patchAssetRights} busy={busy}/> : <div className="admin-placeholder"><strong>API contract ready</strong><p>UI для этого content type будет подключаться к уже определённой D1-схеме после появления соответствующих write endpoints. Неизвестные данные здесь не симулируются.</p></div>}
+          {active==="works" ? <WorksConsole connected={connected} works={works} selected={selected} setSelectedId={setSelectedId} createWork={createWork} patchWork={patchWork} busy={busy}/> : active==="media" ? <MediaConsole connected={connected} createdAsset={createdAsset} createAsset={createAsset} uploadAsset={uploadAsset} patchAsset={patchAssetRights} busy={busy}/> : <div className="admin-placeholder"><strong>API contract ready</strong><p>UI для этого content type будет подключаться к уже определённой D1-схеме после появления соответствующих write endpoints. Неизвестные данные здесь не симулируются.</p></div>}
         </article>
         <article className="admin-rules ds-panel"><small>PUBLISHING GATES</small><h2>Правила публикации</h2>{rules.map(([code,text])=><div key={code}><strong>{code}</strong><p>{text}</p></div>)}</article>
       </div>
@@ -188,7 +187,7 @@ export default function AdminClient(){
   </main>;
 }
 
-function WorksConsole({connected,works,selected,selectedId,setSelectedId,createWork,patchWork,busy}:{connected:boolean;works:Work[];selected:Work|null;selectedId:string;setSelectedId:(id:string)=>void;createWork:(event:FormEvent<HTMLFormElement>)=>void;patchWork:(patch:Partial<Pick<Work,"publicationStatus"|"rightsStatus"|"title"|"description">>)=>Promise<void>;busy:boolean}){
+function WorksConsole({connected,works,selected,setSelectedId,createWork,patchWork,busy}:{connected:boolean;works:Work[];selected:Work|null;setSelectedId:(id:string)=>void;createWork:(event:FormEvent<HTMLFormElement>)=>void;patchWork:(patch:Partial<Pick<Work,"publicationStatus"|"rightsStatus"|"title"|"description">>)=>Promise<void>;busy:boolean}){
   if(!connected)return <div className="admin-placeholder"><strong>Нет backend-сессии</strong><p>Подключите Worker, чтобы читать и менять записи D1.</p></div>;
   return <div className="admin-console"><form className="admin-create-form" onSubmit={createWork}><input name="title" required placeholder="Название"/><input name="slug" required pattern="[a-z0-9-]+" placeholder="slug-latin"/><textarea name="description" placeholder="Описание"/><button disabled={busy}>Создать draft</button></form><div className="admin-work-list">{works.length?works.map((work)=><button type="button" className={selected?.id===work.id?"active":""} key={work.id} onClick={()=>setSelectedId(work.id)}><strong>{work.title}</strong><span>{work.publicationStatus} · {work.rightsStatus}</span></button>):<p>В D1 пока нет произведений.</p>}</div>{selected&&<div className="admin-work-editor"><div><small>ID</small><code>{selected.id}</code></div><div className="admin-gates"><label>RIGHTS<select value={selected.rightsStatus} onChange={(event)=>patchWork({rightsStatus:event.target.value as Work["rightsStatus"]})} disabled={busy}><option>unverified</option><option>cleared</option><option>restricted</option><option>expired</option></select></label><label>PUBLICATION<select value={selected.publicationStatus} onChange={(event)=>patchWork({publicationStatus:event.target.value as Work["publicationStatus"]})} disabled={busy}><option>draft</option><option>review</option><option>published</option><option>archived</option></select></label></div><p>Worker отклонит `published`, пока rights status не станет `cleared`.</p></div>}</div>;
 }

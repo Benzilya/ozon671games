@@ -36,7 +36,6 @@ jobs:
 
       - name: Verify static export
         run: |
-          set -x
           test -f dist/client/index.html
           test -f dist/client/audiobooks.html
           test -f dist/client/films.html
@@ -70,8 +69,8 @@ jobs:
           grep -q '/ozon671games/account.html' dist/client/index.html
           grep -q '/ozon671games/stories/tihiy-den.html' dist/client/index.html
           grep -q 'https://benzilya.github.io/ozon671games/' dist/client/sitemap.xml
-          grep -q 'admin' app/robots.ts
-          grep -q 'account' app/robots.ts
+          grep -q '/ozon671games/admin.html' dist/client/robots.txt
+          grep -q '/ozon671games/account.html' dist/client/robots.txt
           grep -q 'application/ld+json' app/stories/tihiy-den/page.tsx
           grep -q 'Book' app/stories/tihiy-den/page.tsx
           grep -q 'application/ld+json' app/shop/page.tsx

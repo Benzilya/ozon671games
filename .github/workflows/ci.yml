@@ -39,6 +39,7 @@ jobs:
           test -f dist/client/index.html
           test -f dist/client/audiobooks.html
           test -f dist/client/films.html
+          test -f dist/client/characters.html
           test -f dist/client/stories/tihiy-den.html
           test -f dist/client/favicon.svg
           test -f dist/client/og.png

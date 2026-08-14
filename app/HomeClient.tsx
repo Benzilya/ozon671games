@@ -12,6 +12,7 @@ const nav = [
   ["04", "Хронология", "/timeline.html"],
   ["05", "Магазин", "/shop.html"],
   ["06", "Сообщество", "/community.html"],
+  ["07", "Аккаунт", "/account.html"],
 ] as const;
 
 const universeNodes = ["Тихий Дэн", "Ночное такси", "Город", "Ёжлесово", "Сириус 6Б"];

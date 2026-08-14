@@ -10,12 +10,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: "Ozon 671 Stories — вселенная аудиокниг",
   description: "Аудиокниги, AI-фильмы и коллекционные издания вселенной Ozon671Games.",
-  alternates: { canonical: "/" },
   icons: { icon: `${publicBase}/favicon.svg` },
   openGraph: {
     title: "Ozon 671 Stories",
     description: "Истории, которые невозможно забыть",
-    url: "/",
     siteName: "Ozon 671 Stories",
     images: [{ url: `${publicBase}/og.png`, width: 1536, height: 800, alt: "Ozon 671 Stories — Вселенная аудиокниг" }],
     locale: "ru_RU",

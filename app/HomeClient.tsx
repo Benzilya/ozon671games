@@ -50,7 +50,7 @@ export default function HomeClient() {
       </header>
 
       <section className="cover-story" id="top" aria-labelledby="hero-title">
-        <div className="cover-city" aria-hidden="true">
+        <div className="cover-city cover-city-art" style={{ backgroundImage: `url(${publicBase}/hero-ozon671.png)` }} aria-hidden="true">
           <div className="cover-moon" /><div className="cover-block a" /><div className="cover-block b" /><div className="cover-road" /><div className="cover-man" /><div className="cover-red" />
         </div>
         <div className="cover-rain" aria-hidden="true" />

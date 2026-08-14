@@ -1,91 +1,99 @@
 import assert from "node:assert/strict";
-import { access, readFile, readdir } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
+import path from "node:path";
 import test from "node:test";
 
-const developmentPreviewMeta =
-  /<meta(?=[^>]*\bname=["']codex-preview["'])(?=[^>]*\bcontent=["']development["'])[^>]*>/i;
-const templateRoot = new URL("../", import.meta.url);
-const previewRoot = new URL("../app/_sites-preview/", import.meta.url);
+const exportRoot = path.resolve("dist/client");
+const publicBase = "/ozon671games";
+const pages = [
+  "index.html",
+  "search.html",
+  "audiobooks.html",
+  "films.html",
+  "characters.html",
+  "timeline.html",
+  "universe.html",
+  "shop.html",
+  "community.html",
+  "account.html",
+  "admin.html",
+  "stories/tihiy-den.html",
+  "404.html",
+];
 
-async function render() {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
-  const { default: worker } = await import(workerUrl.href);
-
-  return worker.fetch(
-    new Request("http://localhost/", {
-      headers: { accept: "text/html" },
-    }),
-    {
-      ASSETS: {
-        fetch: async () => new Response("Not found", { status: 404 }),
-      },
-    },
-    {
-      waitUntil() {},
-      passThroughOnException() {},
-    },
-  );
+async function exists(target) {
+  try {
+    await access(target);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
-test("server-renders the starter loading skeleton", async () => {
-  const response = await render();
-  assert.equal(response.status, 200);
-  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
+function htmlTargetFromHref(href) {
+  if (!href.startsWith(`${publicBase}/`)) return null;
+  const clean = href.slice(publicBase.length).split(/[?#]/, 1)[0];
+  if (!clean || clean === "/") return "index.html";
+  const relative = clean.replace(/^\//, "");
+  if (relative.startsWith("_next/") || relative.startsWith("favicon") || relative === "og.png") return null;
+  if (relative.endsWith("/")) return path.join(relative, "index.html");
+  if (path.extname(relative)) return relative.endsWith(".html") ? relative : null;
+  return `${relative}.html`;
+}
 
-  const html = await response.text();
-  assert.match(html, developmentPreviewMeta);
-  assert.match(html, /<title>Your site is taking shape<\/title>/i);
-  assert.match(html, /Building your site/);
-  assert.match(html, /Your site is taking shape/);
-  assert.match(
-    html,
-    /Your first version will appear here automatically when it’s ready\./,
-  );
-  assert.doesNotMatch(html, /Codex/);
-  assert.match(html, /react-loading-skeleton/);
-  assert.match(html, /role="status"/);
+test("exports all public and utility pages", async () => {
+  for (const page of pages) {
+    assert.equal(await exists(path.join(exportRoot, page)), true, `Missing exported page: ${page}`);
+  }
+  assert.equal(await exists(path.join(exportRoot, "sitemap.xml")), true);
+  assert.equal(await exists(path.join(exportRoot, "robots.txt")), true);
 });
 
-test("keeps the loading skeleton scoped and disposable", async () => {
-  const [preview, css, page, layout, packageJson, files] = await Promise.all([
-    readFile(new URL("SkeletonPreview.tsx", previewRoot), "utf8"),
-    readFile(new URL("preview.css", previewRoot), "utf8"),
-    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../package.json", import.meta.url), "utf8"),
-    readdir(previewRoot),
+test("exported pages are the Ozon671Games site, not the starter placeholder", async () => {
+  const html = await readFile(path.join(exportRoot, "index.html"), "utf8");
+  assert.match(html, /OZON 671/);
+  assert.match(html, /ТИХИЙ/);
+  assert.match(html, /Истории, которые невозможно забыть|вселенная аудиокниг/i);
+  assert.doesNotMatch(html, /Your site is taking shape|Starter Project|Building your site/i);
+  assert.match(html, /lang="ru"/);
+  assert.match(html, /Перейти к основному содержанию/);
+});
+
+test("all internal HTML links from key pages resolve inside the export", async () => {
+  for (const page of pages.filter((item) => item !== "404.html")) {
+    const html = await readFile(path.join(exportRoot, page), "utf8");
+    const hrefs = [...html.matchAll(/href=["']([^"']+)["']/g)].map((match) => match[1]);
+    for (const href of hrefs) {
+      const target = htmlTargetFromHref(href);
+      if (!target) continue;
+      assert.equal(
+        await exists(path.join(exportRoot, target)),
+        true,
+        `Broken internal link in ${page}: ${href} -> ${target}`,
+      );
+    }
+  }
+});
+
+test("robots and sitemap match the GitHub Pages production origin", async () => {
+  const [robots, sitemap] = await Promise.all([
+    readFile(path.join(exportRoot, "robots.txt"), "utf8"),
+    readFile(path.join(exportRoot, "sitemap.xml"), "utf8"),
   ]);
+  assert.match(robots, /Disallow: \/ozon671games\/admin\.html/);
+  assert.match(robots, /Disallow: \/ozon671games\/account\.html/);
+  assert.match(robots, /https:\/\/benzilya\.github\.io\/ozon671games\/sitemap\.xml/);
+  assert.match(sitemap, /https:\/\/benzilya\.github\.io\/ozon671games\/stories\/tihiy-den\.html/);
+  assert.doesNotMatch(sitemap, /account\.html|admin\.html|search\.html/);
+});
 
-  assert.deepEqual(files.sort(), ["SkeletonPreview.tsx", "preview.css"]);
-  assert.match(preview, /from "react-loading-skeleton"/);
-  assert.match(preview, /baseColor="#eceae7"/);
-  assert.match(preview, /highlightColor="#f9f8f6"/);
-  assert.match(preview, /duration=\{2\.8\}/);
-  assert.match(preview, /sites-skeleton-search-placeholder/);
-  assert.match(packageJson, /"react-loading-skeleton": "3\.5\.0"/);
-
-  const shellIndex = preview.indexOf('className="sites-skeleton-shell"');
-  const statusIndex = preview.indexOf('className="sites-skeleton-status"');
-  assert.ok(shellIndex >= 0 && statusIndex > shellIndex);
-  assert.match(css, /position:\s*fixed/);
-  assert.match(css, /inset:\s*0/);
-  assert.match(css, /opacity:\s*0\.52/);
-  assert.match(css, /prefers-reduced-motion:\s*reduce/);
-  assert.doesNotMatch(css, /#020617|canvas|pets|progress/i);
-  assert.doesNotMatch(
-    preview,
-    /loading-spinner|status-mark|status-progress|canvas|cookie|random/i,
-  );
-
-  assert.match(page, /export const metadata:\s*Metadata/);
-  assert.match(page, /"codex-preview": "development"/);
-  assert.match(page, /<SkeletonPreview \/>/);
-  assert.match(layout, /title:\s*"Starter Project"/);
-  assert.doesNotMatch(layout, /codex-preview|_sites-preview|themeColor|\bViewport\b/);
-  assert.doesNotMatch(css, /(^|\s)(html|body)\s*\{/m);
-
-  await assert.rejects(
-    access(new URL("public/_sites-preview", templateRoot)),
-  );
+test("AI and commerce pages keep required prototype disclosures", async () => {
+  const [films, shop] = await Promise.all([
+    readFile(path.join(exportRoot, "films.html"), "utf8"),
+    readFile(path.join(exportRoot, "shop.html"), "utf8"),
+  ]);
+  assert.match(films, /Создано с помощью ИИ|AI-контент|AI-КОНТЕНТ/i);
+  assert.match(films, /не реальные съёмки|не выдаются за реальные съёмки/i);
+  assert.match(shop, /Цена[^<]{0,40}CMS|цены[^<]{0,60}CMS/i);
+  assert.match(shop, /демо|без реального списания/i);
 });

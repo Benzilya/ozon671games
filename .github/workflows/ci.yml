@@ -112,3 +112,50 @@ jobs:
           grep -q 'Без мелкого шрифта' dist/client/legal.html
           grep -q 'localStorage' dist/client/legal.html
           echo "Static export, data schema, legal disclosure, loading/media, global search, filters, SEO, accessibility, performance and routed navigation contracts are valid."
+
+  cloudflare-config-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CLOUDFLARE_API_TOKEN: ci-placeholder-token
+      CLOUDFLARE_ACCOUNT_ID: 00000000000000000000000000000000
+      ADMIN_API_TOKEN: ci-placeholder-admin-token-not-for-production
+      CF_D1_DATABASE_ID: 00000000-0000-0000-0000-000000000000
+      CF_D1_DATABASE_NAME: ozon671games-ci
+      CF_R2_BUCKET_NAME: ozon671games-ci
+      CF_WORKER_NAME: ozon671games-ci
+      CF_API_BASE_URL: https://api.example.com
+      OIDC_ISSUER: https://oidc.example.com
+      OIDC_AUDIENCE: ozon671games-ci
+      OIDC_JWKS_URL: https://oidc.example.com/.well-known/jwks.json
+      USER_ALLOWED_ORIGIN: https://benzilya.github.io
+      ADMIN_ALLOWED_ORIGIN: https://benzilya.github.io
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.13.0
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate synthetic production contract
+        run: node scripts/validate-cloudflare-production-env.mjs
+
+      - name: Generate synthetic production config
+        run: node scripts/write-cloudflare-production-config.mjs
+
+      - name: Build with production Cloudflare config
+        env:
+          CLOUDFLARE_VITE_WRANGLER_CONFIG_PATH: wrangler.production.json
+        run: npm run build
+
+      - name: Dry-run Worker bundle
+        env:
+          CLOUDFLARE_VITE_WRANGLER_CONFIG_PATH: wrangler.production.json
+        run: npx wrangler deploy --dry-run --outdir .wrangler/ci-dry-run

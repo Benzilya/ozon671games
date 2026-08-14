@@ -31,6 +31,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Validate database schema
+        run: npm run db:generate -- --name=ci-schema-check
+
       - name: Build
         run: npm run build
 
@@ -54,6 +57,7 @@ jobs:
           test -f dist/client/sitemap.xml
           test -f dist/client/robots.txt
           test -f docs/CMS_CONTRACT.md
+          test -f docs/BACKEND_FOUNDATION.md
           test -f dist/client/favicon.svg
           test -f dist/client/og.png
           test -d dist/client/_next/static/css
@@ -99,4 +103,7 @@ jobs:
           grep -q 'loading="lazy"' app/components/RightsSafeMedia.tsx
           grep -q 'decoding="async"' app/components/RightsSafeMedia.tsx
           grep -q 'Создано с помощью ИИ' app/components/RightsSafeMedia.tsx
-          echo "Static export, loading/media, global search, filters, SEO, accessibility, performance and routed navigation contracts are valid."
+          grep -q 'sqliteTable("works"' db/schema.ts
+          grep -q 'sqliteTable("playback_progress"' db/schema.ts
+          grep -q 'Cloudflare Worker + D1 + R2' docs/BACKEND_FOUNDATION.md
+          echo "Static export, data schema, loading/media, global search, filters, SEO, accessibility, performance and routed navigation contracts are valid."

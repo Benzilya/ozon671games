@@ -51,10 +51,10 @@ export default function HomeClient() {
         </nav>
 
         <div className="header-tools">
-          <label className="search-box">
-            <span aria-hidden="true">⌕</span>
-            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Найти историю" aria-label="Глобальный поиск по историям" />
-          </label>
+          <form className="search-box" action={`${publicBase}/search.html`} method="get" role="search">
+            <button className="search-submit" type="submit" aria-label="Искать по всему сайту">⌕</button>
+            <input name="q" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Найти историю" aria-label="Глобальный поиск по сайту" />
+          </form>
           <a className="icon-button" href={`${publicBase}/account.html`} aria-label="Личный кабинет">↳</a>
           <a className="icon-button" href={`${publicBase}/shop.html`} aria-label="Магазин и корзина"><span aria-hidden="true">▱</span></a>
         </div>
@@ -86,7 +86,7 @@ export default function HomeClient() {
 
       <section className="content-section" id="stories">
         <div className="section-heading"><div><div className="ds-kicker">Library / Case files</div><h2 className="ds-section-title">Истории из архива 671</h2></div><p>Постеры пока являются атмосферными заглушками. Официальные обложки и метаданные будут подключаться только после подтверждения прав и источников.</p></div>
-        {query && <p className="ds-kicker">Найдено: {filtered.length}</p>}
+        {query && <p className="ds-kicker">Найдено на главной: {filtered.length} · Enter — глобальный поиск</p>}
         <div className="story-grid">
           {filtered.map((story, index) => (
             <article className="story-card" key={story.title}>

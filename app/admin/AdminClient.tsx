@@ -149,6 +149,20 @@ export default function AdminClient(){
     }catch(error){setNotice(error instanceof Error?error.message:"Ошибка загрузки")}finally{setBusy(false)}
   };
 
+  const patchAssetRights=async(rightsStatus:Asset["rightsStatus"])=>{
+    if(!createdAsset)return;
+    setBusy(true);
+    try{
+      const payload=await request<{data:Asset}>(`/api/admin/assets/${createdAsset.id}`,{method:"PATCH",body:JSON.stringify({rightsStatus})});
+      setCreatedAsset(payload.data);
+      setNotice(`Права asset: ${payload.data.rightsStatus}`);
+    }catch(error){
+      setNotice(error instanceof Error?error.message:"Ошибка прав");
+    }finally{
+      setBusy(false);
+    }
+  };
+
   return <main className="admin-page">
     <header className="admin-header"><a href={`${publicBase}/`}><span>671</span><strong>CMS OPERATOR</strong></a><div className={connected?"admin-status online":"admin-status"}>{connected?"CONNECTED":"OFFLINE"} · {notice}</div></header>
     <aside className="admin-sidebar"><div className="admin-sidebar-title">CONTENT TYPES</div>{sections.map((item)=><button type="button" key={item.id} className={active===item.id?"active":""} onClick={()=>setActive(item.id)}><span>{item.title}</span><b>{counts[item.id as keyof typeof counts]??"—"}</b></button>)}<a href={`${publicBase}/`}>← Публичный сайт</a></aside>
@@ -164,7 +178,7 @@ export default function AdminClient(){
 
       <div className="admin-grid">
         <article className="admin-current ds-panel"><div className="admin-card-top"><small>SELECTED ENTITY</small><span>{counts[current.id as keyof typeof counts]??"—"}</span></div><h2>{current.title}</h2><p>{current.note}</p>
-          {active==="works" ? <WorksConsole connected={connected} works={works} selected={selected} selectedId={selectedId} setSelectedId={setSelectedId} createWork={createWork} patchWork={patchWork} busy={busy}/> : active==="media" ? <MediaConsole connected={connected} createdAsset={createdAsset} createAsset={createAsset} uploadAsset={uploadAsset} patchAsset={async(rightsStatus)=>{if(!createdAsset)return;setBusy(true);try{const payload=await request<{data:Asset}>(`/api/admin/assets/${createdAsset.id}`,{method:"PATCH",body:JSON.stringify({rightsStatus})});setCreatedAsset(payload.data);setNotice(`Права asset: ${payload.data.rightsStatus}`)}catch(error){setNotice(error instanceof Error?error.message:"Ошибка прав")}finally{setBusy(false)}} busy={busy}/> : <div className="admin-placeholder"><strong>API contract ready</strong><p>UI для этого content type будет подключаться к уже определённой D1-схеме после появления соответствующих write endpoints. Неизвестные данные здесь не симулируются.</p></div>}
+          {active==="works" ? <WorksConsole connected={connected} works={works} selected={selected} selectedId={selectedId} setSelectedId={setSelectedId} createWork={createWork} patchWork={patchWork} busy={busy}/> : active==="media" ? <MediaConsole connected={connected} createdAsset={createdAsset} createAsset={createAsset} uploadAsset={uploadAsset} patchAsset={patchAssetRights} busy={busy}/> : <div className="admin-placeholder"><strong>API contract ready</strong><p>UI для этого content type будет подключаться к уже определённой D1-схеме после появления соответствующих write endpoints. Неизвестные данные здесь не симулируются.</p></div>}
         </article>
         <article className="admin-rules ds-panel"><small>PUBLISHING GATES</small><h2>Правила публикации</h2>{rules.map(([code,text])=><div key={code}><strong>{code}</strong><p>{text}</p></div>)}</article>
       </div>

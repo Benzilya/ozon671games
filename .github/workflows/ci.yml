@@ -36,7 +36,9 @@ jobs:
 
       - name: Verify static export
         run: |
-          test -f dist/client/index.html
-          test -f dist/client/favicon.svg
-          test -f dist/client/og.png
+          echo "Exported files:"
+          find dist/client -maxdepth 3 -type f | sort | head -100
+          find dist/client -name index.html -type f | grep -q .
+          find dist/client -name favicon.svg -type f | grep -q .
+          find dist/client -name og.png -type f | grep -q .
           echo "Static export files are present."

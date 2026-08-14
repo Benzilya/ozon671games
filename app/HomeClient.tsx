@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import NoirSoundscape from "./components/NoirSoundscape";
 import { featuredStories, quietDan, type StoryRecord } from "./data/stories";
 
 const publicBase = process.env.GITHUB_ACTIONS === "true" ? "/ozon671games" : "";
@@ -50,6 +51,7 @@ export default function HomeClient() {
       </header>
 
       <section className="cover-story" id="top" aria-labelledby="hero-title">
+        <div className="archive-mode-note">LIVE ARCHIVE / INVESTIGATION MODE</div>
         <div className="cover-city" aria-hidden="true">
           <div className="cover-moon" /><div className="cover-block a" /><div className="cover-block b" /><div className="cover-road" /><div className="cover-man" /><div className="cover-red" />
         </div>
@@ -68,6 +70,8 @@ export default function HomeClient() {
           <span>FILE</span><strong>TD-671-01</strong>
           <span>FORM</span><strong>AUDIO / VIDEO / PRINT</strong>
           <span>STATUS</span><strong>ARCHIVE OPEN</strong>
+          <span>SUBJECT</span><strong>ТИХИЙ ДЭН</strong>
+          <span>LINKS</span><strong>4 CONNECTIONS</strong>
           <span>TIME</span><strong>03:17 AM</strong>
         </aside>
         <div className="cover-stamp" aria-hidden="true">ДЕЛО<br />ОТКРЫТО</div>
@@ -84,31 +88,36 @@ export default function HomeClient() {
 
       <section className="archive-index" id="stories">
         <header className="editorial-heading">
-          <div><span>SECTION 01 / LIBRARY</span><h2>Дела из архива</h2></div>
-          <p>Не витрина стриминга. Каталог историй, собранный как папка следователя: код, жанр, носитель и следующее действие.</p>
+          <div><span>FILE 01 / AUDIO ARCHIVE</span><h2>Дела из архива</h2></div>
+          <p>Каждая история выглядит как отдельная папка дела: код, носители, статус и связи. Это не витрина стриминга, а рабочий архив вселенной.</p>
         </header>
 
         {query && <div className="search-note">LOCAL INDEX / найдено: {filtered.length}</div>}
         <div className="case-ledger">
           {filtered.map((story, index) => (
             <article className="case-row" key={story.slug}>
-              <div className="case-number">0{index + 1}</div>
+              <div className="case-number">FILE / 0{index + 1}</div>
               <button className={`case-photo tone-${story.tone}`} type="button" onClick={() => play(story)} aria-label={`Запустить демо ${story.title}`}>
                 <span>{story.code}</span><i>PLAY</i>
               </button>
               <div className="case-name"><small>{story.genre}</small><h3>{story.title}</h3></div>
-              <div className="case-formats">{story.formats.map((format) => <span key={format}>{format}</span>)}</div>
-              <div className="case-action">{story.slug === "tihiy-den" ? <a href={`${publicBase}/stories/tihiy-den.html`}>ОТКРЫТЬ ДЕЛО ↗</a> : <button type="button" onClick={() => play(story)}>СЛУШАТЬ ДЕМО →</button>}</div>
+              <div className="case-folder-meta">
+                <div><span>FORMAT</span><b>{story.formats.join(" / ")}</b></div>
+                <div><span>STATUS</span><b>{story.status}</b></div>
+                <div><span>SERIES</span><b>{story.series}</b></div>
+                <div><span>YEAR</span><b>{story.year}</b></div>
+              </div>
+              <div className="case-action">{story.slug === "tihiy-den" ? <a href={`${publicBase}/stories/tihiy-den.html`}>ОТКРЫТЬ ДЕЛО ↗</a> : <button type="button" onClick={() => play(story)}>ПРОСЛУШАТЬ ЗАПИСЬ →</button>}</div>
             </article>
           ))}
         </div>
-        <a className="archive-wide-link" href={`${publicBase}/audiobooks.html`}><span>ВСЕ МАТЕРИАЛЫ</span><b>Открыть полный каталог</b><i>→</i></a>
+        <a className="archive-wide-link" href={`${publicBase}/audiobooks.html`}><span>ARCHIVE INDEX</span><b>Открыть полный каталог</b><i>→</i></a>
       </section>
 
       <section className="screening-room" id="films">
         <div className="screening-frame" aria-hidden="true"><div className="taxi-light" /><div className="screen-person" /><strong>НОЧНОЕ<br />ТАКСИ</strong><small>GENERATED MATERIAL / AI LABEL REQUIRED</small></div>
         <div className="screening-copy">
-          <span>SECTION 02 / MOVING IMAGE</span>
+          <span>FILE 02 / MOVING IMAGE</span>
           <h2>Истории<br />выходят из текста.</h2>
           <p>Трейлеры, короткие формы, AI-экранизации и фанатские визуальные работы. Генеративные материалы всегда помечаются отдельно.</p>
           <div className="warning-line">● СОЗДАНО С ПОМОЩЬЮ ИИ — если применимо</div>
@@ -118,7 +127,7 @@ export default function HomeClient() {
 
       <section className="evidence-board" id="world">
         <header className="editorial-heading inverse">
-          <div><span>SECTION 03 / CONNECTIONS</span><h2>Карта совпадений</h2></div>
+          <div><span>FILE 03 / EVIDENCE</span><h2>Карта совпадений</h2></div>
           <p>Герои, места и события лежат не в аккуратной схеме, а в связях, которые постепенно становятся видимыми.</p>
         </header>
         <a className="evidence-canvas" href={`${publicBase}/universe.html`} aria-label="Открыть карту вселенной">
@@ -132,7 +141,7 @@ export default function HomeClient() {
       <section className="print-file" id="shop">
         <div className="book-object" aria-hidden="true"><div className="book-spine">671</div><div className="book-face"><small>COLLECTOR FILE</small><strong>ТИХИЙ<br />ДЭН</strong><span>OZON 671 GAMES</span></div></div>
         <div className="print-copy">
-          <span>SECTION 04 / PHYSICAL OBJECT</span>
+          <span>FILE 04 / PHYSICAL EVIDENCE</span>
           <h2>Не мерч.<br />Вещдок.</h2>
           <p>Печатное издание должно ощущаться продолжением истории: бумага, переплёт, тиснение, иллюстрации и подпись автора. Цена и наличие подключаются только из подтверждённых данных.</p>
           <dl><div><dt>ФОРМАТ</dt><dd>будет подтверждён</dd></div><div><dt>КОМПЛЕКТАЦИЯ</dt><dd>из CMS</dd></div><div><dt>СТАТУС</dt><dd>данные магазина</dd></div></dl>
@@ -141,7 +150,7 @@ export default function HomeClient() {
       </section>
 
       <section className="fan-wire" id="community">
-        <div className="fan-title"><span>SECTION 05 / COMMUNITY</span><h2>РЕСПЕКТ ФАНАМ</h2><em>Стандартно.</em></div>
+        <div className="fan-title"><span>FILE 05 / WITNESSES</span><h2>РЕСПЕКТ ФАНАМ</h2><em>Стандартно.</em></div>
         <div className="fan-copy"><p>Стримы, фан-арты, теории, премьеры и материалы людей, которые не могут остановиться.</p><a href={`${publicBase}/community.html`}>ВОЙТИ В СООБЩЕСТВО →</a></div>
         <div className="fan-links"><a href="https://youtube.com/@ozon671games3" target="_blank" rel="noreferrer">YOUTUBE ↗</a><a href="https://t.me/ozon671games3official" target="_blank" rel="noreferrer">TELEGRAM ↗</a><a href="https://boosty.to/ozon671games3" target="_blank" rel="noreferrer">BOOSTY ↗</a></div>
       </section>
@@ -151,6 +160,8 @@ export default function HomeClient() {
         <p>Самостоятельная цифровая вселенная Ozon671Games. Не связана с маркетплейсом OZON.</p>
         <span>© 2026 / WORK IN PROGRESS</span>
       </footer>
+
+      <NoirSoundscape />
 
       <div className={`recorder${playing ? " is-visible" : ""}`} aria-hidden={!playing}>
         <div className="rec-dot">● REC</div><div className="rec-track"><strong>{active.title}</strong><span>DEMO / локальный прогресс</span></div><button type="button" onClick={() => setPlaying(!playing)}>{playing ? "Ⅱ" : "▶"}</button><div className="rec-wave">▂▅▃▇▄▂▆▁▃▅▇▂▆▃▁▅</div><a href={`${publicBase}/stories/tihiy-den.html`}>OPEN ↗</a><button type="button" onClick={() => setPlaying(false)} aria-label="Закрыть">×</button>

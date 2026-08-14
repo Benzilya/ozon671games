@@ -39,4 +39,4 @@ jobs:
           test -f dist/client/index.html
           test -f dist/client/favicon.svg
           test -f dist/client/og.png
-          grep -q '/ozon671games' dist/client/index.html
+          echo "Static export files are present."

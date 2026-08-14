@@ -12,4 +12,5 @@ export const publicRoutes = [
   "/shop.html",
   "/community.html",
   "/stories/tihiy-den.html",
+  "/legal.html",
 ] as const;

@@ -21,6 +21,10 @@
   border-color: #c64b41;
 }
 
+.archive-home .evidence-note small {
+  color: #4d463e;
+}
+
 .story-page .story-player-copy small,
 .story-page .story-player-copy span,
 .story-page .story-progress-meta,
@@ -31,7 +35,8 @@
 .story-page .player-option small,
 .story-page .player-shortcuts small,
 .story-page .story-tabs button,
-.story-page .chapter-row > span {
+.story-page .chapter-row > span,
+.story-page .chapter-row small {
   color: #aaa398;
 }
 

@@ -57,4 +57,13 @@ jobs:
           test ! -d dist/client/ozon671games/_next
           grep -q '/ozon671games/_next/static/css/' dist/client/index.html
           grep -q '/ozon671games/_next/static/chunks/' dist/client/index.html
-          echo "Static export, content routes and GitHub Pages asset paths are valid."
+          grep -q '/ozon671games/audiobooks.html' dist/client/index.html
+          grep -q '/ozon671games/films.html' dist/client/index.html
+          grep -q '/ozon671games/characters.html' dist/client/index.html
+          grep -q '/ozon671games/timeline.html' dist/client/index.html
+          grep -q '/ozon671games/universe.html' dist/client/index.html
+          grep -q '/ozon671games/shop.html' dist/client/index.html
+          grep -q '/ozon671games/community.html' dist/client/index.html
+          grep -q '/ozon671games/account.html' dist/client/index.html
+          grep -q '/ozon671games/stories/tihiy-den.html' dist/client/index.html
+          echo "Static export, routed navigation and GitHub Pages asset paths are valid."

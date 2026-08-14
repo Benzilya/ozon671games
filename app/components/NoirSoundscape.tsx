@@ -22,6 +22,14 @@ function createNoiseBuffer(context: AudioContext) {
   return buffer;
 }
 
+function safeStop(node: AudioBufferSourceNode | OscillatorNode) {
+  try {
+    node.stop();
+  } catch {
+    void 0;
+  }
+}
+
 export default function NoirSoundscape() {
   const [enabled, setEnabled] = useState(false);
   const [level, setLevel] = useState(0.34);
@@ -36,9 +44,9 @@ export default function NoirSoundscape() {
     active.master.gain.setTargetAtTime(0, active.context.currentTime, 0.12);
 
     window.setTimeout(() => {
-      try { active.rain.stop(); } catch {}
-      try { active.hum.stop(); } catch {}
-      try { active.pulse.stop(); } catch {}
+      safeStop(active.rain);
+      safeStop(active.hum);
+      safeStop(active.pulse);
       void active.context.close();
     }, 260);
 
@@ -112,9 +120,9 @@ export default function NoirSoundscape() {
     const active = nodes.current;
     if (!active) return;
     window.clearInterval(active.interval);
-    try { active.rain.stop(); } catch {}
-    try { active.hum.stop(); } catch {}
-    try { active.pulse.stop(); } catch {}
+    safeStop(active.rain);
+    safeStop(active.hum);
+    safeStop(active.pulse);
     void active.context.close();
   }, []);
 

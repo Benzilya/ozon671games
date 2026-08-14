@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import LoadingSkeleton from "../components/LoadingSkeleton";
 import { stories } from "../data/stories";
 
 const allGenres = ["Все жанры", ...Array.from(new Set(stories.map((story) => story.genre)))];
@@ -84,7 +85,7 @@ export default function AudiobooksClient() {
         <p>Каталог историй Ozon671Games. Официальные метаданные подключаются только из подтверждённых источников или CMS.</p>
       </section>
 
-      <section className="catalog-tools" aria-label="Фильтры каталога">
+      <section className="catalog-tools" aria-label="Фильтры каталога" aria-busy={!hydrated}>
         <label className="catalog-search"><span aria-hidden="true">⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Название или жанр" aria-label="Название или жанр" /></label>
         <select value={genre} onChange={(event) => setGenre(event.target.value)} aria-label="Жанр">{allGenres.map((item) => <option key={item}>{item}</option>)}</select>
         <select value={status} onChange={(event) => setStatus(event.target.value)} aria-label="Статус"><option>Все статусы</option><option>Статус не подтверждён</option><option>Завершено</option><option>Продолжается</option></select>
@@ -96,9 +97,11 @@ export default function AudiobooksClient() {
       </section>
 
       <section className="catalog-results">
-        <div className="catalog-summary"><span className="ds-kicker" aria-live="polite">Найдено / {filtered.length}</span><button type="button" onClick={resetFilters}>Сбросить фильтры</button></div>
+        <div className="catalog-summary"><span className="ds-kicker" aria-live="polite">{hydrated ? `Найдено / ${filtered.length}` : "Восстанавливаем фильтры…"}</span><button type="button" onClick={resetFilters}>Сбросить фильтры</button></div>
 
-        <div className={`catalog-items catalog-items--${view}`}>
+        {!hydrated && <LoadingSkeleton rows={4} label="Восстанавливаем каталог и сохранённые фильтры" />}
+
+        {hydrated && <div className={`catalog-items catalog-items--${view}`}>
           {filtered.map((story, index) => (
             <article className="catalog-card ds-panel" key={story.slug}>
               <div className={`catalog-poster tone-${story.tone}`} aria-hidden="true"><span>CASE {String(index + 1).padStart(2, "0")}</span><strong>{story.code}</strong></div>
@@ -114,9 +117,9 @@ export default function AudiobooksClient() {
               </div>
             </article>
           ))}
-        </div>
+        </div>}
 
-        {filtered.length === 0 && <div className="catalog-empty ds-panel"><strong>Ничего не найдено</strong><p>Попробуйте снять часть фильтров или изменить запрос.</p></div>}
+        {hydrated && filtered.length === 0 && <div className="catalog-empty ds-panel"><strong>Ничего не найдено</strong><p>Попробуйте снять часть фильтров или изменить запрос.</p></div>}
       </section>
     </main>
   );

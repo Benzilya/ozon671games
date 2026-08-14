@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import MobileDock from "./MobileDock";
 import "./globals.css";
+import "./navigation.css";
 
 const publicBase = process.env.GITHUB_ACTIONS === "true" ? "/ozon671games" : "";
 

@@ -3,6 +3,7 @@ import StoryClient from "./StoryClient";
 import { siteUrl } from "../../seo";
 import "./story.css";
 import "./player.css";
+import "./editorial-story.css";
 
 export const dynamic = "force-static";
 

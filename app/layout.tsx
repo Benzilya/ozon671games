@@ -9,6 +9,7 @@ import "./loading-media.css";
 import "./editorial-noir.css";
 import "./home-editorial.css";
 import "./quality-fixes.css";
+import "./readability.css";
 
 const publicBase = process.env.GITHUB_ACTIONS === "true" ? "/ozon671games" : "";
 const ogImageUrl = `${siteUrl}/og.png`;

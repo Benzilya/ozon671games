@@ -21,7 +21,9 @@
   border-color: #c64b41;
 }
 
-.archive-home .evidence-note small {
+.archive-home .evidence-note small,
+.archive-home .print-copy > span,
+.archive-home dt {
   color: #4d463e;
 }
 
@@ -36,7 +38,10 @@
 .story-page .player-shortcuts small,
 .story-page .story-tabs button,
 .story-page .chapter-row > span,
-.story-page .chapter-row small {
+.story-page .chapter-row small,
+.story-page .story-quote-band > small,
+.story-page .story-quote-band > span,
+.story-page footer > p {
   color: #aaa398;
 }
 

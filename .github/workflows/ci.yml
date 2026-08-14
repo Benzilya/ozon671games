@@ -92,4 +92,11 @@ jobs:
           grep -q 'ozon671:catalog-filters' app/audiobooks/AudiobooksClient.tsx
           grep -q 'aria-live="polite"' app/search/SearchClient.tsx
           grep -q 'URLSearchParams' app/search/SearchClient.tsx
-          echo "Static export, global search, filters, SEO, accessibility, performance and routed navigation contracts are valid."
+          grep -q 'LoadingSkeleton' app/search/SearchClient.tsx
+          grep -q 'LoadingSkeleton' app/audiobooks/AudiobooksClient.tsx
+          grep -q 'role="status"' app/components/LoadingSkeleton.tsx
+          grep -q 'rights !== "approved"' app/components/RightsSafeMedia.tsx
+          grep -q 'loading="lazy"' app/components/RightsSafeMedia.tsx
+          grep -q 'decoding="async"' app/components/RightsSafeMedia.tsx
+          grep -q 'Создано с помощью ИИ' app/components/RightsSafeMedia.tsx
+          echo "Static export, loading/media, global search, filters, SEO, accessibility, performance and routed navigation contracts are valid."

@@ -5,6 +5,7 @@ import "./globals.css";
 import "./navigation.css";
 import "./accessibility.css";
 import "./performance.css";
+import "./loading-media.css";
 
 const publicBase = process.env.GITHUB_ACTIONS === "true" ? "/ozon671games" : "";
 

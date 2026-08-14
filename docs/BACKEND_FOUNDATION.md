@@ -2,39 +2,19 @@
 
 ## Решение
 
-Backend-слой проекта готовится на **Cloudflare Worker + D1 + R2**. Это не новая смена стека: репозиторий уже содержит `worker/index.ts`, Cloudflare Vite plugin, Wrangler, Drizzle ORM и D1 binding `DB`. Поэтому этот вариант требует меньше инфраструктурных прослоек, чем добавление второго backend-провайдера.
+Backend-слой проекта построен вокруг **Cloudflare Worker + D1 + R2**. Это продолжает уже используемый стек: `worker/index.ts`, Cloudflare Vite plugin, Wrangler, Drizzle ORM и D1 binding `DB` находятся в одном репозитории.
 
-GitHub Pages остаётся публичным статическим frontend до момента, когда backend будет реально подключён. Frontend не должен зависеть от недоступного API для базового открытия сайта.
+GitHub Pages остаётся публичным статическим frontend до момента реального подключения backend. Базовое открытие сайта не зависит от API.
 
 ## D1
 
-`db/schema.ts` описывает production-ready основу для:
+`db/schema.ts` описывает основу для works/genres, chapters/progress, assets/rights, films, characters, products/orders, users/favorites, events, comments и external links.
 
-- works и genres;
-- chapters и progress;
-- assets и rights/AI disclosure;
-- films;
-- characters и связи с произведениями;
-- products, variants, orders и order items;
-- users, favorites, saved moments;
-- events;
-- comments/moderation;
-- external links.
-
-Схема намеренно хранит только подтверждённые CMS-данные. Неизвестные цены, остатки, длительности и канонические связи остаются nullable/draft.
+Неизвестные цены, остатки, длительности и канонические связи остаются nullable/draft и не подменяются выдуманными значениями.
 
 ## R2
 
-После подключения R2 в нём должны храниться крупные разрешённые файлы:
-
-- аудио;
-- видео;
-- изображения/постеры;
-- документы и downloadable media.
-
-Большие media-файлы не должны попадать в Git-репозиторий.
-
-Рекомендуемая структура ключей:
+После подключения R2 крупные разрешённые файлы должны храниться вне Git:
 
 ```text
 works/<work-slug>/audio/<asset-id>.<ext>
@@ -46,37 +26,86 @@ products/<product-slug>/<asset-id>.<ext>
 
 ## Rights gate
 
-Перед публичной отдачей asset backend обязан проверить:
+Публичный контент обязан проходить следующие условия:
 
-1. `rights_status = cleared`;
-2. publication status связанного материала = `published`;
-3. AI disclosure возвращается вместе с метаданными;
-4. restricted/expired/unverified assets не выдаются как публичный контент.
+1. произведение: `publication_status = published`;
+2. произведение: `rights_status = cleared`;
+3. asset: `rights_status = cleared` перед публичной выдачей файла;
+4. AI disclosure возвращается вместе с метаданными;
+5. restricted/expired/unverified материалы не выдаются как официальный публичный контент.
 
-## API boundary
+Admin API дополнительно запрещает перевод произведения в `published`, если итоговый `rights_status` не равен `cleared`.
 
-Планируемая первая версия API:
+## Public read API
+
+Реализовано в Worker:
 
 ```text
-GET  /api/works
-GET  /api/works/:slug
-GET  /api/works/:slug/chapters
-GET  /api/films
-GET  /api/characters
-GET  /api/timeline
-GET  /api/products
-GET  /api/community
-GET  /api/me
-PUT  /api/me/progress/:workId
-PUT  /api/me/favorites/:workId
+GET /api/health
+GET /api/works
+GET /api/works/:slug
+GET /api/films
+GET /api/characters
+GET /api/timeline
+GET /api/products
+GET /api/links
+```
+
+Публичные write-запросы возвращают `405`. Это намеренно: пользовательские записи появятся только вместе с production auth.
+
+## Admin write API
+
+Административный контур отделён от публичного API и использует server-side secret `ADMIN_API_TOKEN`:
+
+```text
+GET   /api/admin/health
+GET   /api/admin/works
+POST  /api/admin/works
+PATCH /api/admin/works/:id
+PATCH /api/admin/comments/:id
+```
+
+Правила:
+
+- токен передаётся только как `Authorization: Bearer <token>`;
+- токен нельзя хранить в Git или в публичном frontend bundle;
+- сравнение токена выполняется по SHA-256 digest, чтобы не использовать обычное раннее строковое сравнение;
+- новый work всегда создаётся как `draft + unverified`;
+- публикация запрещается rights gate, пока права не переведены в `cleared`;
+- admin responses имеют `cache-control: no-store`;
+- CORS для admin API не открывается через `*`; при browser-CMS нужно задать точный `ADMIN_ALLOWED_ORIGIN`.
+
+Этот bearer-secret — **административная server-to-server/CMS защита**, а не пользовательская система входа. Его нельзя использовать как login для посетителей сайта.
+
+## User auth boundary
+
+Будущие маршруты аккаунта остаются отключёнными до выбора и настройки production authentication:
+
+```text
+GET /api/me
+PUT /api/me/progress/:workId
+PUT /api/me/favorites/:workId
 POST /api/comments
 POST /api/orders
 ```
 
-Admin write endpoints должны быть отделены от публичных read endpoints и проверять роль `editor`, `moderator` или `admin`.
+После подключения auth сервер должен связывать внешнюю identity с `users.id` и проверять роль/владение данными на каждом write-запросе.
+
+## Переменные окружения
+
+Backend ожидает:
+
+```text
+DB                    Cloudflare D1 binding
+MEDIA                 Cloudflare R2 binding (optional until media activation)
+ADMIN_API_TOKEN       secret, required for /api/admin/*
+ADMIN_ALLOWED_ORIGIN  exact CMS origin, optional until browser CMS activation
+```
+
+Ни одно значение secret/resource ID не должно коммититься в Git.
 
 ## Что требуется для реального подключения
 
-В `.openai/hosting.json` сейчас `d1` и `r2` равны `null`. Для production нужны реальные Cloudflare resources/bindings и секреты окружения. Их нельзя выдумывать или хранить в Git.
+В `.openai/hosting.json` сейчас реальные D1/R2 resources не provisioned. Для production нужны созданные Cloudflare D1/R2 resources и секрет окружения `ADMIN_API_TOKEN`.
 
-До подключения ресурсов сайт продолжает работать как статический GitHub Pages frontend с локальными demo-state/localStorage механиками.
+До этого сайт продолжает работать как статический GitHub Pages frontend с локальными demo-state/localStorage механиками, а Worker API остаётся подготовленным к активации.

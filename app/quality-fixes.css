@@ -14,13 +14,20 @@
   color: #aaa398;
 }
 
+.archive-home .fan-wire {
+  background: #721b16 !important;
+}
+
+.archive-home .fan-title,
 .archive-home .fan-title > span,
 .archive-home .fan-title > em {
-  color: #fff4e8 !important;
+  color: #fff !important;
+  opacity: 1 !important;
 }
 
 .archive-home .archive-footer > p {
-  color: #d9d1c5 !important;
+  color: #fff !important;
+  opacity: 1 !important;
 }
 
 .archive-home .tape-copy span {
@@ -57,12 +64,14 @@
 }
 
 .story-page .story-quote-band {
-  background: #7f211a !important;
+  background: #55130f !important;
 }
 
+.story-page .story-quote-band,
 .story-page .story-quote-band > small,
 .story-page .story-quote-band > span {
   color: #fff !important;
+  opacity: 1 !important;
 }
 
 .story-page .story-tabs button.active {

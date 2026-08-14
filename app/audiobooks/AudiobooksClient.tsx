@@ -48,7 +48,7 @@ export default function AudiobooksClient() {
   return (
     <main className="catalog-page">
       <section className="catalog-hero">
-        <a className="catalog-back" href="../">← Главная</a>
+        <a className="catalog-back" href="./">← Главная</a>
         <div className="case-label">Archive / Audio files</div>
         <h1>АУДИОКНИГИ</h1>
         <p>Каталог историй Ozon671Games. Метаданные, длительности и годы публикации будут подключены только из подтверждённых источников или CMS.</p>

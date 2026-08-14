@@ -10,6 +10,7 @@ import "./editorial-noir.css";
 import "./home-editorial.css";
 
 const publicBase = process.env.GITHUB_ACTIONS === "true" ? "/ozon671games" : "";
+const ogImageUrl = `${siteUrl}/og.png`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -19,12 +20,18 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Ozon 671 Stories",
     description: "Истории, которые невозможно забыть",
+    url: `${siteUrl}/`,
     siteName: "Ozon 671 Stories",
-    images: [{ url: `${publicBase}/og.png`, width: 1536, height: 800, alt: "Ozon 671 Stories — Вселенная аудиокниг" }],
+    images: [{ url: ogImageUrl, width: 1536, height: 800, alt: "Ozon 671 Stories — Вселенная аудиокниг" }],
     locale: "ru_RU",
     type: "website",
   },
-  twitter: { card: "summary_large_image", title: "Ozon 671 Stories", description: "Истории, которые невозможно забыть", images: [`${publicBase}/og.png`] },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ozon 671 Stories",
+    description: "Истории, которые невозможно забыть",
+    images: [ogImageUrl],
+  },
 };
 
 const websiteSchema = {

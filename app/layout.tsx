@@ -3,6 +3,7 @@ import MobileDock from "./MobileDock";
 import { siteUrl } from "./seo";
 import "./globals.css";
 import "./navigation.css";
+import "./accessibility.css";
 
 const publicBase = process.env.GITHUB_ACTIONS === "true" ? "/ozon671games" : "";
 
@@ -36,8 +37,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="ru">
       <body>
+        <a className="skip-link" href="#main-content">Перейти к основному содержанию</a>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
-        {children}
+        <div id="main-content" tabIndex={-1}>{children}</div>
         <MobileDock />
       </body>
     </html>

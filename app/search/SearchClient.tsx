@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import LoadingSkeleton from "../components/LoadingSkeleton";
 import { stories } from "../data/stories";
 
 const publicBase = process.env.GITHUB_ACTIONS === "true" ? "/ozon671games" : "";
@@ -17,10 +18,14 @@ const sections = [
 
 export default function SearchClient() {
   const [query, setQuery] = useState("");
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const value = new URLSearchParams(window.location.search).get("q")?.trim() ?? "";
-    const timer = window.setTimeout(() => setQuery(value), 0);
+    const timer = window.setTimeout(() => {
+      setQuery(value);
+      setReady(true);
+    }, 0);
     return () => window.clearTimeout(timer);
   }, []);
 
@@ -63,12 +68,14 @@ export default function SearchClient() {
           />
         </label>
         <div className="global-search-meta" aria-live="polite">
-          {query ? `Найдено: ${results.length}` : "Введите запрос"}
+          {!ready ? "Читаем запрос…" : query ? `Найдено: ${results.length}` : "Введите запрос"}
         </div>
       </section>
 
       <section className="global-search-results" aria-label="Результаты поиска">
-        {results.map((item) => (
+        {!ready && <LoadingSkeleton rows={3} label="Подготавливаем результаты поиска" />}
+
+        {ready && results.map((item) => (
           <a className="global-search-result ds-panel" href={`${publicBase}${item.href}`} key={`${item.type}-${item.title}`}>
             <span className="ds-kicker">{item.type}</span>
             <strong>{item.title}</strong>
@@ -77,7 +84,7 @@ export default function SearchClient() {
           </a>
         ))}
 
-        {query && results.length === 0 && (
+        {ready && query && results.length === 0 && (
           <div className="global-search-empty ds-panel">
             <strong>Ничего не найдено</strong>
             <p>Попробуйте название истории, жанр или название раздела.</p>

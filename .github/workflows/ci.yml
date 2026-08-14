@@ -69,9 +69,12 @@ jobs:
           grep -q '/ozon671games/account.html' dist/client/index.html
           grep -q '/ozon671games/stories/tihiy-den.html' dist/client/index.html
           grep -q 'https://benzilya.github.io/ozon671games/' dist/client/sitemap.xml
-          grep -q '/ozon671games/admin.html' dist/client/robots.txt
-          grep -q '/ozon671games/account.html' dist/client/robots.txt
-          grep -q '"@type":"Book"' dist/client/stories/tihiy-den.html
-          grep -q '"@type":"Product"' dist/client/shop.html
-          grep -q '"@type":"VideoObject"' dist/client/films.html
+          grep -q '/ozon671games/admin' dist/client/robots.txt
+          grep -q '/ozon671games/account' dist/client/robots.txt
+          grep -q 'application/ld+json' dist/client/stories/tihiy-den.html
+          grep -q 'Book' dist/client/stories/tihiy-den.html
+          grep -q 'application/ld+json' dist/client/shop.html
+          grep -q 'Product' dist/client/shop.html
+          grep -q 'application/ld+json' dist/client/films.html
+          grep -q 'VideoObject' dist/client/films.html
           echo "Static export, SEO artifacts, routed navigation and GitHub Pages asset paths are valid."

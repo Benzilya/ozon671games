@@ -53,6 +53,7 @@ jobs:
           test -f dist/client/account.html
           test -f dist/client/admin.html
           test -f dist/client/community.html
+          test -f dist/client/legal.html
           test -f dist/client/stories/tihiy-den.html
           test -f dist/client/sitemap.xml
           test -f dist/client/robots.txt
@@ -79,7 +80,7 @@ jobs:
           grep -q '/ozon671games/stories/tihiy-den.html' dist/client/index.html
           grep -q 'https://benzilya.github.io/ozon671games/og.png' dist/client/index.html
           ! grep -q '/ozon671games/ozon671games/og.png' dist/client/index.html
-          grep -q 'https://benzilya.github.io/ozon671games/' dist/client/sitemap.xml
+          grep -q 'https://benzilya.github.io/ozon671games/legal.html' dist/client/sitemap.xml
           grep -q '/ozon671games/admin.html' dist/client/robots.txt
           grep -q '/ozon671games/account.html' dist/client/robots.txt
           grep -q 'application/ld+json' app/stories/tihiy-den/page.tsx
@@ -108,4 +109,6 @@ jobs:
           grep -q 'sqliteTable("works"' db/schema.ts
           grep -q 'sqliteTable("playback_progress"' db/schema.ts
           grep -q 'Cloudflare Worker + D1 + R2' docs/BACKEND_FOUNDATION.md
-          echo "Static export, data schema, loading/media, global search, filters, SEO, accessibility, performance and routed navigation contracts are valid."
+          grep -q 'Без мелкого шрифта' dist/client/legal.html
+          grep -q 'localStorage' dist/client/legal.html
+          echo "Static export, data schema, legal disclosure, loading/media, global search, filters, SEO, accessibility, performance and routed navigation contracts are valid."

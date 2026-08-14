@@ -47,6 +47,8 @@ jobs:
           test -f dist/client/admin.html
           test -f dist/client/community.html
           test -f dist/client/stories/tihiy-den.html
+          test -f dist/client/sitemap.xml
+          test -f dist/client/robots.txt
           test -f docs/CMS_CONTRACT.md
           test -f dist/client/favicon.svg
           test -f dist/client/og.png
@@ -66,4 +68,13 @@ jobs:
           grep -q '/ozon671games/community.html' dist/client/index.html
           grep -q '/ozon671games/account.html' dist/client/index.html
           grep -q '/ozon671games/stories/tihiy-den.html' dist/client/index.html
-          echo "Static export, routed navigation and GitHub Pages asset paths are valid."
+          grep -q 'https://benzilya.github.io/ozon671games/' dist/client/sitemap.xml
+          grep -q '/ozon671games/admin.html' dist/client/robots.txt
+          grep -q '/ozon671games/account.html' dist/client/robots.txt
+          grep -q 'application/ld+json' app/stories/tihiy-den/page.tsx
+          grep -q 'Book' app/stories/tihiy-den/page.tsx
+          grep -q 'application/ld+json' app/shop/page.tsx
+          grep -q 'Product' app/shop/page.tsx
+          grep -q 'application/ld+json' app/films/page.tsx
+          grep -q 'VideoObject' app/films/page.tsx
+          echo "Static export, SEO contracts, routed navigation and GitHub Pages asset paths are valid."

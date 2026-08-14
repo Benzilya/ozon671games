@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /ozon671games/
+Disallow: /ozon671games/admin.html
+Disallow: /ozon671games/account.html
+
+Sitemap: https://benzilya.github.io/ozon671games/sitemap.xml

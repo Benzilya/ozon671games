@@ -4,7 +4,7 @@ const isGitHubActions = process.env.GITHUB_ACTIONS === "true";
 
 const nextConfig: NextConfig = {
   output: "export",
-  trailingSlash: true,
+  trailingSlash: false,
   assetPrefix: isGitHubActions ? "/ozon671games/" : undefined,
   images: {
     unoptimized: true,

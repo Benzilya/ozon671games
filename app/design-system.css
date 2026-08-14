@@ -19,9 +19,9 @@
   --radius-lg: 24px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --page-gutter: clamp(20px, 5vw, 84px);
-  --display: "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
-  --body: Inter, Manrope, Arial, sans-serif;
-  --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --display: "Oswald", "Arial Narrow", Impact, sans-serif;
+  --body: "Inter", Manrope, Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
 }
 
 * { box-sizing: border-box; }

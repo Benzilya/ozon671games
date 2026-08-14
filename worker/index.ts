@@ -1,5 +1,5 @@
 /** Cloudflare Worker entry point for the vinext application and API. */
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, or } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
@@ -41,7 +41,7 @@ function adminHeaders(env: Env, request: Request) {
   const headers: Record<string, string> = {
     "content-type": "application/json; charset=utf-8",
     "cache-control": "no-store",
-    "access-control-allow-methods": "GET,POST,PATCH,OPTIONS",
+    "access-control-allow-methods": "GET,POST,PUT,PATCH,OPTIONS",
     "access-control-allow-headers": "authorization,content-type",
     "vary": "Origin",
   };
@@ -88,9 +88,54 @@ function isRightsStatus(value: unknown): value is "unverified" | "cleared" | "re
   return value === "unverified" || value === "cleared" || value === "restricted" || value === "expired";
 }
 
+function isAssetKind(value: unknown): value is "image" | "audio" | "video" | "document" {
+  return value === "image" || value === "audio" || value === "video" || value === "document";
+}
+
+function isAiDisclosure(value: unknown): value is "none" | "ai-assisted" | "ai-generated" {
+  return value === "none" || value === "ai-assisted" || value === "ai-generated";
+}
+
 function cleanOptionalInteger(value: unknown) {
   if (value === null || value === undefined || value === "") return null;
   return Number.isInteger(value) ? Number(value) : undefined;
+}
+
+function safeStorageKey(value: unknown) {
+  if (typeof value !== "string") return null;
+  const key = value.trim().replace(/^\/+/, "");
+  if (!key || key.length > 512 || key.includes("..") || !/^[a-zA-Z0-9/_.,@+() -]+$/.test(key)) return null;
+  return key;
+}
+
+function assetStorageKey(url: string) {
+  return url.startsWith("r2://") ? safeStorageKey(url.slice(5)) : null;
+}
+
+async function assetHasPublicReference(db: ReturnType<typeof drizzle<typeof schema>>, assetId: string) {
+  const work = await db.select({ id: schema.works.id }).from(schema.works).where(and(
+    eq(schema.works.publicationStatus, "published"),
+    eq(schema.works.rightsStatus, "cleared"),
+    or(eq(schema.works.coverAssetId, assetId), eq(schema.works.heroAssetId, assetId)),
+  )).limit(1);
+  if (work[0]) return true;
+
+  const chapter = await db.select({ id: schema.chapters.id }).from(schema.chapters)
+    .innerJoin(schema.works, eq(schema.chapters.workId, schema.works.id))
+    .where(and(
+      eq(schema.chapters.audioAssetId, assetId),
+      eq(schema.chapters.publicationStatus, "published"),
+      eq(schema.works.publicationStatus, "published"),
+      eq(schema.works.rightsStatus, "cleared"),
+    )).limit(1);
+  if (chapter[0]) return true;
+
+  const [film, character, product] = await Promise.all([
+    db.select({ id: schema.films.id }).from(schema.films).where(and(eq(schema.films.videoAssetId, assetId), eq(schema.films.publicationStatus, "published"))).limit(1),
+    db.select({ id: schema.characters.id }).from(schema.characters).where(and(eq(schema.characters.portraitAssetId, assetId), eq(schema.characters.publicationStatus, "published"))).limit(1),
+    db.select({ id: schema.products.id }).from(schema.products).where(and(eq(schema.products.coverAssetId, assetId), eq(schema.products.publicationStatus, "published"))).limit(1),
+  ]);
+  return Boolean(film[0] || character[0] || product[0]);
 }
 
 async function handleAdminApi(request: Request, env: Env, url: URL): Promise<Response | null> {
@@ -114,6 +159,71 @@ async function handleAdminApi(request: Request, env: Env, url: URL): Promise<Res
 
   if (url.pathname === "/api/admin/health" && request.method === "GET") {
     return adminJson(env, request, { ok: true, databaseConfigured: true, mediaConfigured: Boolean(env.MEDIA), adminAuthConfigured: true });
+  }
+
+  if (url.pathname === "/api/admin/assets" && request.method === "POST") {
+    const body = await request.json().catch(() => null) as Record<string, unknown> | null;
+    const kind = body?.kind;
+    const key = safeStorageKey(body?.storageKey);
+    const aiDisclosure = body?.aiDisclosure ?? "none";
+    if (!isAssetKind(kind) || !key || !isAiDisclosure(aiDisclosure)) {
+      return adminJson(env, request, { error: "invalid_payload", fields: ["kind", "storageKey", "aiDisclosure"] }, 400);
+    }
+    const now = new Date().toISOString();
+    const id = crypto.randomUUID();
+    await db.insert(schema.assets).values({
+      id,
+      kind,
+      url: `r2://${key}`,
+      alt: typeof body?.alt === "string" ? body.alt.trim() : null,
+      rightsStatus: "unverified",
+      rightsHolder: typeof body?.rightsHolder === "string" ? body.rightsHolder.trim() : null,
+      licenseNote: typeof body?.licenseNote === "string" ? body.licenseNote.trim() : null,
+      aiDisclosure,
+      createdAt: now,
+      updatedAt: now,
+    });
+    const created = await db.select().from(schema.assets).where(eq(schema.assets.id, id)).limit(1);
+    return adminJson(env, request, { data: created[0] }, 201);
+  }
+
+  const adminAssetMatch = url.pathname.match(/^\/api\/admin\/assets\/([^/]+)$/);
+  if (adminAssetMatch && request.method === "PATCH") {
+    const id = decodeURIComponent(adminAssetMatch[1]);
+    const current = (await db.select().from(schema.assets).where(eq(schema.assets.id, id)).limit(1))[0];
+    if (!current) return adminJson(env, request, { error: "not_found" }, 404);
+    const body = await request.json().catch(() => null) as Record<string, unknown> | null;
+    if (!body) return adminJson(env, request, { error: "invalid_payload" }, 400);
+    const patch: Partial<typeof schema.assets.$inferInsert> = { updatedAt: new Date().toISOString() };
+    if (isRightsStatus(body.rightsStatus)) patch.rightsStatus = body.rightsStatus;
+    if (isAiDisclosure(body.aiDisclosure)) patch.aiDisclosure = body.aiDisclosure;
+    if (typeof body.alt === "string" || body.alt === null) patch.alt = body.alt as string | null;
+    if (typeof body.rightsHolder === "string" || body.rightsHolder === null) patch.rightsHolder = body.rightsHolder as string | null;
+    if (typeof body.licenseNote === "string" || body.licenseNote === null) patch.licenseNote = body.licenseNote as string | null;
+    await db.update(schema.assets).set(patch).where(eq(schema.assets.id, id));
+    const updated = await db.select().from(schema.assets).where(eq(schema.assets.id, id)).limit(1);
+    return adminJson(env, request, { data: updated[0] });
+  }
+
+  const mediaUploadMatch = url.pathname.match(/^\/api\/admin\/media\/([^/]+)$/);
+  if (mediaUploadMatch && request.method === "PUT") {
+    if (!env.MEDIA) return adminJson(env, request, { error: "backend_not_configured", resource: "R2" }, 503);
+    const assetId = decodeURIComponent(mediaUploadMatch[1]);
+    const asset = (await db.select().from(schema.assets).where(eq(schema.assets.id, assetId)).limit(1))[0];
+    if (!asset) return adminJson(env, request, { error: "not_found" }, 404);
+    const key = assetStorageKey(asset.url);
+    if (!key) return adminJson(env, request, { error: "invalid_storage_reference" }, 409);
+    if (!request.body) return adminJson(env, request, { error: "empty_body" }, 400);
+
+    const contentType = request.headers.get("content-type")?.split(";", 1)[0]?.trim().toLowerCase() ?? "application/octet-stream";
+    const allowed = asset.kind === "image" ? contentType.startsWith("image/")
+      : asset.kind === "audio" ? contentType.startsWith("audio/")
+      : asset.kind === "video" ? contentType.startsWith("video/")
+      : contentType === "application/pdf" || contentType === "application/octet-stream";
+    if (!allowed) return adminJson(env, request, { error: "content_type_mismatch", kind: asset.kind, contentType }, 415);
+
+    const object = await env.MEDIA.put(key, request.body, { httpMetadata: { contentType } });
+    return adminJson(env, request, { data: { assetId, key, etag: object.httpEtag, uploaded: true } }, 201);
   }
 
   if (url.pathname === "/api/admin/works" && request.method === "GET") {
@@ -201,6 +311,24 @@ async function handlePublicApi(request: Request, env: Env, url: URL): Promise<Re
   if (!env.DB) return unavailable("D1");
   const db = drizzle(env.DB, { schema });
 
+  const publicMediaMatch = url.pathname.match(/^\/api\/media\/([^/]+)$/);
+  if (publicMediaMatch) {
+    if (!env.MEDIA) return unavailable("R2");
+    const assetId = decodeURIComponent(publicMediaMatch[1]);
+    const asset = (await db.select().from(schema.assets).where(and(eq(schema.assets.id, assetId), eq(schema.assets.rightsStatus, "cleared"))).limit(1))[0];
+    if (!asset || !(await assetHasPublicReference(db, assetId))) return json({ error: "not_found" }, 404, { "cache-control": "no-store" });
+    const key = assetStorageKey(asset.url);
+    if (!key) return json({ error: "not_found" }, 404, { "cache-control": "no-store" });
+    const object = await env.MEDIA.get(key);
+    if (!object) return json({ error: "not_found" }, 404, { "cache-control": "no-store" });
+    const headers = new Headers();
+    object.writeHttpMetadata(headers);
+    headers.set("etag", object.httpEtag);
+    headers.set("cache-control", "public, max-age=3600, stale-while-revalidate=86400");
+    headers.set("x-content-type-options", "nosniff");
+    return new Response(request.method === "HEAD" ? null : object.body, { headers });
+  }
+
   if (url.pathname === "/api/works") {
     const rows = await db.select().from(schema.works).where(and(eq(schema.works.publicationStatus, "published"), eq(schema.works.rightsStatus, "cleared"))).orderBy(asc(schema.works.title));
     return json({ data: rows });
@@ -255,7 +383,7 @@ const worker = {
     if (adminResponse) return adminResponse;
 
     const apiResponse = await handlePublicApi(request, env, url);
-    if (apiResponse) return request.method === "HEAD" ? new Response(null, { status: apiResponse.status, headers: apiResponse.headers }) : apiResponse;
+    if (apiResponse) return request.method === "HEAD" && apiResponse.headers.get("content-type")?.includes("application/json") ? new Response(null, { status: apiResponse.status, headers: apiResponse.headers }) : apiResponse;
 
     if (url.pathname === "/_vinext/image") {
       const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];

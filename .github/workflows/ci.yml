@@ -77,4 +77,9 @@ jobs:
           grep -q 'Product' app/shop/page.tsx
           grep -q 'application/ld+json' app/films/page.tsx
           grep -q 'VideoObject' app/films/page.tsx
-          echo "Static export, SEO contracts, routed navigation and GitHub Pages asset paths are valid."
+          grep -q 'Перейти к основному содержанию' dist/client/index.html
+          grep -q 'id="main-content"' dist/client/index.html
+          grep -q ':focus-visible' app/accessibility.css
+          grep -q 'prefers-reduced-motion' app/accessibility.css
+          grep -q 'min-height: 44px' app/accessibility.css
+          echo "Static export, SEO, accessibility contracts, routed navigation and GitHub Pages asset paths are valid."

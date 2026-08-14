@@ -43,8 +43,8 @@ test("public API does not accept anonymous writes", () => {
 
 test("backend documentation keeps admin and user auth separate", () => {
   assert.match(docs, /ADMIN_API_TOKEN/);
-  assert.match(docs, /не пользовательская система входа/);
-  assert.match(docs, /User auth boundary/);
+  assert.match(docs, /Admin token нельзя использовать как пользовательский login/);
+  assert.match(docs, /User authentication — provider-neutral OIDC/);
   assert.match(docs, /ADMIN_ALLOWED_ORIGIN/);
   assert.match(docs, /GET\s+\/api\/media\/:assetId/);
   assert.match(docs, /не открывает bucket напрямую/);

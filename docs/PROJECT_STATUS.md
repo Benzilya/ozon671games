@@ -1,8 +1,8 @@
 # Состояние проекта
 
-Обновлено: 2026-08-15.
+Обновлено: 2026-08-26.
 
-Текущий milestone: **полноценный статический frontend на GitHub Pages + editorial noir дизайн + подготовленный Cloudflare backend-контур + постоянные browser/Cloudflare CI gates**.
+Текущий milestone: **рабочий статический frontend на GitHub Pages + единый living archive / editorial noir дизайн + подготовленный Cloudflare backend-контур + постоянные browser/Cloudflare CI gates**.
 
 Публичная версия: `https://benzilya.github.io/ozon671games/`
 
@@ -59,7 +59,7 @@
 - JSON-LD WebSite, Book, Product и VideoObject;
 - корректный canonical social image URL.
 
-### Этап 18 — проверка производительности
+### Этап 18 — производительность
 
 - permanent Chromium browser-quality workflow для PR и `main`;
 - проверка page errors, console errors и failed resources;
@@ -68,19 +68,19 @@
 - navigation budget: до 5000 ms;
 - проверка ключевых desktop и mobile routes.
 
-### Этап 19 — проверка доступности
+### Этап 19 — доступность
 
 - skip link, focus-visible, keyboard paths, reduced motion;
 - автоматизированный Chromium + axe gate для serious/critical violations;
 - проверка `main`/`h1` и ключевых маршрутов;
-- выявленные contrast regressions исправлены;
+- contrast regressions исправлены;
 - автоматический axe не заменяет ручную screen-reader/assistive-technology проверку, но серьёзные автоматически обнаруживаемые regressions блокируют CI.
 
 ### Этап 20 — мобильная версия
 
 - responsive layout и mobile dock;
 - browser QA на 390×844;
-- найден и исправлен shop horizontal overflow;
+- исправлен shop horizontal overflow;
 - mobile overflow regression-gated в CI.
 
 ### Этапы 21–22 — тесты и CI
@@ -90,7 +90,7 @@
 - production dependency audit (`npm audit --omit=dev --audit-level=high`);
 - permanent browser quality workflow;
 - GitHub Pages deploy workflow;
-- отдельный `cloudflare-config-smoke` job в обычном CI: синтетический production env → Wrangler config generation → Cloudflare Vite build → `wrangler deploy --dry-run` без production secrets.
+- `cloudflare-config-smoke`: synthetic production env → Wrangler config generation → Cloudflare Vite build → `wrangler deploy --dry-run` без production secrets.
 
 ### Этап 23 — production hardening
 
@@ -101,8 +101,19 @@
 - production env preflight validation;
 - Worker deploy dry-run до remote migrations;
 - post-deploy smoke checks для public/admin API;
-- activation runbook в `docs/CLOUDFLARE_ACTIVATION.md`;
-- lint-регрессия в процедурном soundscape cleanup исправлена после merge компонента.
+- activation runbook в `docs/CLOUDFLARE_ACTIVATION.md`.
+
+### Этап 24 — Living Archive / визуальная целостность
+
+- главная закреплена в концепции живого криминального архива;
+- hero «Тихого Дэна» усилен актуальным фоном и noir-типографикой;
+- добавлена и развита карта совпадений вселенной;
+- процедурный `NIGHT SIGNAL` через Web Audio API снова постоянно смонтирован в UI и не требует внешних музыкальных файлов;
+- звук запускается только действием пользователя, имеет громкость и мобильный clearance над dock;
+- отдельный regression contract блокирует случайное исчезновение soundscape из production UI;
+- внутренние публичные страницы получили единый archival spine, служебную красную линию, `INDEX / FILTERS` и `ACTIVE FILE` язык;
+- account/admin намеренно не превращаются в художественные «досье», чтобы сохранить функциональную ясность;
+- новая визуальная система прошла Validate project, Product tests, Production dependency audit и Browser quality gates.
 
 ## Что требует внешней инфраструктуры
 
@@ -119,11 +130,13 @@
 
 ## Текущая задача
 
-**Этап 14.4 — Активация production-backend в Cloudflare.**
+**Этап 24.1 — дальнейшая продуктовая полировка статического frontend без внешних credentials.**
 
-Репозиторий уже содержит подготовительный код: production config generation, env validation, CI dry-run, D1 migration, deploy, admin secret setup и smoke checks. Следующий технический шаг начинается после появления реальных Cloudflare resources/credentials и OIDC application settings.
+До появления production Cloudflare/OIDC ресурсов работа продолжается в репозитории по направлениям: визуальная целостность, UX-переходы между разделами, контентные связи, regression tests, accessibility и performance. Подготовленный backend-контур при этом не имитирует живую persistence раньше времени.
 
-Порядок активации:
+Параллельный инфраструктурный milestone остаётся: **Этап 14.4 — Активация production-backend в Cloudflare**.
+
+Порядок активации после появления внешних ресурсов:
 
 1. заполнить GitHub Secrets / Variables из `docs/CLOUDFLARE_ACTIVATION.md`;
 2. запустить manual `Deploy Cloudflare backend` workflow;

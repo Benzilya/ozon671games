@@ -116,6 +116,14 @@
   color: #e36b60;
 }
 
+/* Full-route browser QA: small red archive labels need stronger contrast. */
+.characters-page .characters-rule-grid article > strong,
+.timeline-page .timeline-legend > div > strong,
+.universe-page .universe-legend article > strong {
+  color: #ff9a89 !important;
+  opacity: 1 !important;
+}
+
 @media (max-width: 720px) {
   .archive-home .cover-copy h1 {
     line-height: .9;

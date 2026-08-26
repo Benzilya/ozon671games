@@ -6,6 +6,7 @@ import AxeBuilder from "@axe-core/playwright";
 
 const root = new URL("../dist/client/", import.meta.url).pathname;
 const port = 4173;
+const origin = `http://127.0.0.1:${port}`;
 const routes = [
   "/",
   "/audiobooks.html",
@@ -23,6 +24,7 @@ const routes = [
 ];
 const mobileRoutes = routes;
 const seriousImpacts = new Set(["serious", "critical"]);
+const checkedInternalLinks = new Set();
 
 const mime = {
   ".html": "text/html; charset=utf-8",
@@ -38,7 +40,7 @@ const mime = {
 };
 
 function resolveAsset(requestUrl) {
-  const url = new URL(requestUrl, `http://127.0.0.1:${port}`);
+  const url = new URL(requestUrl, origin);
   let pathname = decodeURIComponent(url.pathname);
   if (pathname.startsWith("/ozon671games/")) pathname = pathname.slice("/ozon671games".length);
   if (pathname === "/") pathname = "/index.html";
@@ -74,6 +76,26 @@ const browser = await chromium.launch({ headless: true });
 const failures = [];
 console.log(`Browser quality coverage: ${routes.length} routes × 2 viewports = ${routes.length * 2} audits.`);
 
+async function auditInternalLinks(context, page, route) {
+  const hrefs = await page.locator("a[href]").evaluateAll((anchors) => [...new Set(anchors.map((anchor) => anchor.href))]);
+  let checked = 0;
+
+  for (const href of hrefs) {
+    const url = new URL(href);
+    if (url.origin !== origin) continue;
+
+    const target = `${url.pathname}${url.search}`;
+    if (checkedInternalLinks.has(target)) continue;
+    checkedInternalLinks.add(target);
+
+    const response = await context.request.get(`${origin}${target}`, { failOnStatusCode: false, maxRedirects: 5 });
+    checked += 1;
+    if (response.status() >= 400) failures.push(`${route}: internal link ${target} returned ${response.status()}`);
+  }
+
+  return checked;
+}
+
 async function auditRoute(route, viewport) {
   const context = await browser.newContext({ viewport });
   const page = await context.newPage();
@@ -90,7 +112,7 @@ async function auditRoute(route, viewport) {
   });
 
   const started = Date.now();
-  const response = await page.goto(`http://127.0.0.1:${port}${route}`, { waitUntil: "networkidle", timeout: 15000 });
+  const response = await page.goto(`${origin}${route}`, { waitUntil: "networkidle", timeout: 15000 });
   const wallMs = Date.now() - started;
   if (!response?.ok()) failures.push(`${route}: document response ${response?.status() ?? "missing"}`);
   if (pageErrors.length) failures.push(`${route}: page errors: ${pageErrors.join(" | ")}`);
@@ -118,6 +140,7 @@ async function auditRoute(route, viewport) {
   if (metrics.mainCount !== 1) failures.push(`${route}: expected exactly one <main>, found ${metrics.mainCount}`);
   if (metrics.h1Count < 1) failures.push(`${route}: page has no <h1>`);
 
+  const checkedLinks = await auditInternalLinks(context, page, route);
   const axe = await new AxeBuilder({ page }).analyze();
   const blockingViolations = axe.violations.filter((item) => seriousImpacts.has(item.impact));
   for (const violation of blockingViolations) {
@@ -125,7 +148,7 @@ async function auditRoute(route, viewport) {
     failures.push(`${route}: axe ${violation.impact} ${violation.id} — ${targets}`);
   }
 
-  console.log(`${route} @ ${viewport.width}x${viewport.height}: DOM=${metrics.domNodes}, transfer=${metrics.transferBytes}, nav=${Math.round(metrics.durationMs)}ms, axe=${axe.violations.length}`);
+  console.log(`${route} @ ${viewport.width}x${viewport.height}: DOM=${metrics.domNodes}, transfer=${metrics.transferBytes}, nav=${Math.round(metrics.durationMs)}ms, axe=${axe.violations.length}, new-links=${checkedLinks}`);
   await context.close();
 }
 
@@ -142,4 +165,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log("Browser quality gate passed.");
+console.log(`Browser quality gate passed. Verified ${checkedInternalLinks.size} unique internal link targets.`);

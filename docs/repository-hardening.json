@@ -1,0 +1,19 @@
+{
+  "targetBranch": "main",
+  "requirePullRequest": true,
+  "requiredApprovals": 0,
+  "requireConversationResolution": true,
+  "requireStatusChecksToPass": true,
+  "requireBranchUpToDate": true,
+  "requiredStatusChecks": [
+    "validate",
+    "cloudflare-config-smoke",
+    "product-tests",
+    "audit",
+    "browser-quality"
+  ],
+  "blockForcePushes": true,
+  "blockDeletions": true,
+  "allowDirectPushes": false,
+  "notes": "Solo-owner contract: PR is required, but no external approval is required. GitHub Pages deploy runs after merge and is intentionally not a pre-merge required check."
+}

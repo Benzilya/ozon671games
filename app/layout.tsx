@@ -11,6 +11,7 @@ import "./editorial-noir.css";
 import "./home-editorial.css";
 import "./quality-fixes.css";
 import "./archive-experience.css";
+import "./inner-archive.css";
 
 const publicBase = process.env.GITHUB_ACTIONS === "true" ? "/ozon671games" : "";
 const ogImageUrl = `${siteUrl}/og.png`;

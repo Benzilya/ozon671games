@@ -16,7 +16,9 @@
 - главная, аудиокниги, «Тихий Дэн», AI-фильмы, персонажи, хронология, вселенная, магазин, сообщество, поиск, account prototype и admin/CMS UI;
 - локальный demo player с главами, seek, ±15 секунд, скоростью, громкостью, sleep timer, keyboard controls и localStorage progress;
 - rights-safe media UI и видимая пометка «Создано с помощью ИИ» для AI-generated материалов;
-- локальная demo-корзина без выдуманных production цен и без реального checkout.
+- локальная demo-корзина без выдуманных production цен и без реального checkout;
+- отображаемые коды, годы, длительности, цены, тиражи и связи не подменяются официально выглядящими выдуманными значениями: подтверждённые поля читаются из центральных данных/CMS, неизвестные остаются `—`, `Не указано` или `Из CMS`;
+- атмосферный copy на главной и странице произведения явно отделён от цитат/канона.
 
 ### Этап 14 — backend foundation и авторизация
 
@@ -73,7 +75,7 @@
 - skip link, focus-visible, keyboard paths, reduced motion;
 - автоматизированный Chromium + axe gate для serious/critical violations;
 - проверка `main`/`h1` и ключевых маршрутов;
-- contrast regressions исправлены;
+- contrast regressions исправлены, включая новый `CASE PATH`;
 - автоматический axe не заменяет ручную screen-reader/assistive-technology проверку, но серьёзные автоматически обнаруживаемые regressions блокируют CI.
 
 ### Этап 20 — мобильная версия
@@ -81,6 +83,7 @@
 - responsive layout и mobile dock;
 - browser QA на 390×844;
 - исправлен shop horizontal overflow;
+- `CASE PATH` имеет отдельный mobile clearance над dock;
 - mobile overflow regression-gated в CI.
 
 ### Этапы 21–22 — тесты и CI
@@ -90,7 +93,8 @@
 - production dependency audit (`npm audit --omit=dev --audit-level=high`);
 - permanent browser quality workflow;
 - GitHub Pages deploy workflow;
-- `cloudflare-config-smoke`: synthetic production env → Wrangler config generation → Cloudflare Vite build → `wrangler deploy --dry-run` без production secrets.
+- `cloudflare-config-smoke`: synthetic production env → Wrangler config generation → Cloudflare Vite build → `wrangler deploy --dry-run` без production secrets;
+- regression tests блокируют возврат выдуманных псевдоканонических file IDs, цен, cross-story claims и немаркированного interface copy.
 
 ### Этап 23 — production hardening
 
@@ -103,17 +107,19 @@
 - post-deploy smoke checks для public/admin API;
 - activation runbook в `docs/CLOUDFLARE_ACTIVATION.md`.
 
-### Этап 24 — Living Archive / визуальная целостность
+### Этап 24 — Living Archive / визуальная и контентная целостность
 
 - главная закреплена в концепции живого криминального архива;
-- hero «Тихого Дэна» усилен актуальным фоном и noir-типографикой;
-- добавлена и развита карта совпадений вселенной;
-- процедурный `NIGHT SIGNAL` через Web Audio API снова постоянно смонтирован в UI и не требует внешних музыкальных файлов;
+- hero «Тихого Дэна» усилен актуальным фоном и noir-типографикой, пересечение строк заголовка устранено;
+- карта вселенной переведена в data-driven архив: названия произведений берутся из `stories.ts`, подтверждённые межкнижные связи не выдумываются, до появления авторских/CMS данных показывается 0 подтверждённых связей;
+- персонажи, AI-фильмы, магазин, поиск и hero-досье очищены от официально выглядящих, но неподтверждённых кодов, качеств, дат и связей;
+- процедурный `NIGHT SIGNAL` через Web Audio API постоянно смонтирован в UI и не требует внешних музыкальных файлов;
 - звук запускается только действием пользователя, имеет громкость и мобильный clearance над dock;
 - отдельный regression contract блокирует случайное исчезновение soundscape из production UI;
 - внутренние публичные страницы получили единый archival spine, служебную красную линию, `INDEX / FILTERS` и `ACTIVE FILE` язык;
+- добавлен контекстный `CASE PATH` между публичными тематическими разделами с keyboard focus, mobile clearance и reduced-transparency fallback;
 - account/admin намеренно не превращаются в художественные «досье», чтобы сохранить функциональную ясность;
-- новая визуальная система прошла Validate project, Product tests, Production dependency audit и Browser quality gates.
+- визуальные и контентные изменения проходят Validate project, Product tests, Production dependency audit, Cloudflare dry-run и Browser quality gates перед merge.
 
 ## Что требует внешней инфраструктуры
 
@@ -132,7 +138,7 @@
 
 **Этап 24.1 — дальнейшая продуктовая полировка статического frontend без внешних credentials.**
 
-До появления production Cloudflare/OIDC ресурсов работа продолжается в репозитории по направлениям: визуальная целостность, UX-переходы между разделами, контентные связи, regression tests, accessibility и performance. Подготовленный backend-контур при этом не имитирует живую persistence раньше времени.
+До появления production Cloudflare/OIDC ресурсов работа продолжается в репозитории только там, где есть реальный подтверждаемый выигрыш: UX-переходы, визуальная целостность, content-safety/rights-safe copy, regression tests, accessibility и performance. Неподтверждённые связи/метаданные не используются для искусственного наполнения интерфейса.
 
 Параллельный инфраструктурный milestone остаётся: **Этап 14.4 — Активация production-backend в Cloudflare**.
 

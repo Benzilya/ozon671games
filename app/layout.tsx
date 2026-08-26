@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import MobileDock from "./MobileDock";
+import SiteAtmosphere from "./components/SiteAtmosphere";
 import { siteUrl } from "./seo";
 import "./globals.css";
 import "./navigation.css";
@@ -9,6 +10,7 @@ import "./loading-media.css";
 import "./editorial-noir.css";
 import "./home-editorial.css";
 import "./quality-fixes.css";
+import "./archive-experience.css";
 
 const publicBase = process.env.GITHUB_ACTIONS === "true" ? "/ozon671games" : "";
 const ogImageUrl = `${siteUrl}/og.png`;
@@ -52,6 +54,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <a className="skip-link" href="#main-content">Перейти к основному содержанию</a>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
         <div id="main-content" tabIndex={-1}>{children}</div>
+        <SiteAtmosphere />
         <MobileDock />
       </body>
     </html>

@@ -46,6 +46,12 @@ export default function CharactersClient() {
 
   const active = characters.find((character) => character.id === activeId) ?? characters[0];
 
+  const resetCharacterFilters = () => {
+    setQuery("");
+    setStatus("Все");
+    setActiveId(characters[0].id);
+  };
+
   return (
     <main className="characters-page">
       <header className="characters-header">
@@ -79,7 +85,7 @@ export default function CharactersClient() {
               <div><small>{character.work}</small><h2>{character.name}</h2><p>{character.role}</p></div>
               <span className={`character-status ${character.status === "Подтверждено" ? "verified" : "pending"}`}>{character.status}</span>
             </button>)}
-            {visible.length === 0 && <div className="characters-empty">В архиве ничего не найдено.</div>}
+            {visible.length === 0 && <div className="characters-empty"><strong>В архиве ничего не найдено</strong><p>Снимите поиск и статус, чтобы вернуться ко всему кадровому архиву.</p><button type="button" onClick={resetCharacterFilters}>Показать весь архив</button></div>}
           </div>
 
           <aside className="character-inspector ds-panel" aria-live="polite">

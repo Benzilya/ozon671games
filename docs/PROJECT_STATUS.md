@@ -121,6 +121,7 @@
 - добавлен контекстный `CASE PATH` между публичными тематическими разделами с keyboard focus, mobile clearance и reduced-transparency fallback;
 - generic `WIP / WORK IN PROGRESS` убран из публичных поверхностей в пользу точных архивных статусов, а реальные `DEMO / CMS / PENDING` ограничения сохранены;
 - dead disabled CTA в аудиокаталоге и сообществе заменены на честные статусы или реальные доступные действия;
+- пустые состояния глобального поиска, аудиокаталога и кадрового архива получили явные recovery actions: очистить запрос/фильтры или перейти в существующий связанный раздел;
 - account/admin намеренно не превращаются в художественные «досье», чтобы сохранить функциональную ясность;
 - визуальные и контентные изменения проходят Validate project, Product tests, Production dependency audit, Cloudflare dry-run и полный Browser quality gate перед merge.
 

@@ -8,14 +8,20 @@ const root = new URL("../dist/client/", import.meta.url).pathname;
 const port = 4173;
 const routes = [
   "/",
+  "/audiobooks.html",
   "/stories/tihiy-den.html",
   "/films.html",
+  "/characters.html",
+  "/timeline.html",
+  "/universe.html",
   "/shop.html",
+  "/community.html",
+  "/search.html",
   "/account.html",
   "/admin.html",
   "/legal.html",
 ];
-const mobileRoutes = ["/", "/stories/tihiy-den.html", "/shop.html"];
+const mobileRoutes = routes;
 const seriousImpacts = new Set(["serious", "critical"]);
 
 const mime = {
@@ -66,6 +72,7 @@ const server = createServer(async (request, response) => {
 await new Promise((resolve) => server.listen(port, "127.0.0.1", resolve));
 const browser = await chromium.launch({ headless: true });
 const failures = [];
+console.log(`Browser quality coverage: ${routes.length} routes × 2 viewports = ${routes.length * 2} audits.`);
 
 async function auditRoute(route, viewport) {
   const context = await browser.newContext({ viewport });

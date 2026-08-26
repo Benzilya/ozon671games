@@ -58,7 +58,7 @@ export default function HomeClient() {
           <div className="archive-meta">ARCHIVE 671 / STORY FILE / {quietDan.code}</div>
           <h1 id="hero-title"><span>ТИХИЙ</span><b>ДЭН</b></h1>
           <p className="cover-deck">{quietDan.description}</p>
-          <blockquote>Некоторые истории начинаются с выстрела. Эта — со швабры.</blockquote>
+          <blockquote><small>INTERFACE COPY / НЕ ЦИТАТА ИЗ ПРОИЗВЕДЕНИЯ</small>Некоторые истории начинаются с выстрела. Эта — со швабры.</blockquote>
           <div className="cover-actions">
             <button type="button" onClick={() => play(quietDan)}>▶ НАЧАТЬ ИСТОРИЮ</button>
             <a href={`${publicBase}/stories/tihiy-den.html`}>Открыть дело ↗</a>

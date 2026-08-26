@@ -48,6 +48,11 @@ export default function SearchClient() {
     );
   }, [query]);
 
+  const clearSearch = () => {
+    setQuery("");
+    if (window.location.search) window.history.replaceState({}, "", window.location.pathname);
+  };
+
   return (
     <main className="global-search-page">
       <header className="global-search-hero">
@@ -86,8 +91,15 @@ export default function SearchClient() {
 
         {ready && query && results.length === 0 && (
           <div className="global-search-empty ds-panel">
-            <strong>Ничего не найдено</strong>
-            <p>Попробуйте название истории, жанр или название раздела.</p>
+            <div>
+              <strong>Ничего не найдено</strong>
+              <p>Снимите запрос или продолжите исследование через основные архивные разделы.</p>
+            </div>
+            <div className="global-search-empty-actions">
+              <button type="button" onClick={clearSearch}>Очистить запрос</button>
+              <a href={`${publicBase}/audiobooks.html`}>Аудиоархив</a>
+              <a href={`${publicBase}/universe.html`}>Карта вселенной</a>
+            </div>
           </div>
         )}
       </section>

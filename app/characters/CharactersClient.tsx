@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { quietDan } from "../data/stories";
 
 const publicBase = process.env.GITHUB_ACTIONS === "true" ? "/ozon671games" : "";
 
@@ -20,15 +21,15 @@ const characters: CharacterRecord[] = [
   {
     id: "tihiy-den",
     name: "Тихий Дэн",
-    code: "TD-001",
-    work: "Тихий Дэн",
+    code: quietDan.code,
+    work: quietDan.title,
     status: "Подтверждено",
     role: "Главный герой",
-    description: "Обычный мойщик полов, чья жизнь меняется после цепочки загадочных событий. На странице используются только сведения, уже подтверждённые описанием произведения.",
+    description: `${quietDan.description} На странице используются только сведения, уже подтверждённые описанием произведения.`,
   },
-  { id: "redacted-02", name: "REDACTED", code: "??-002", work: "Архив 671", status: "Ожидает данных", role: "Не указано", description: "Карточка зарезервирована. Имя, роль и связи появятся только после редакционного подтверждения." },
-  { id: "redacted-03", name: "REDACTED", code: "??-003", work: "Архив 671", status: "Ожидает данных", role: "Не указано", description: "Карточка зарезервирована. Мы не заполняем биографию догадками или фанатскими версиями." },
-  { id: "redacted-04", name: "REDACTED", code: "??-004", work: "Архив 671", status: "Ожидает данных", role: "Не указано", description: "Будущая карточка персонажа с источником, произведениями, связями и предупреждением о спойлерах." },
+  { id: "redacted-02", name: "REDACTED", code: "—", work: "Архив 671", status: "Ожидает данных", role: "Не указано", description: "Карточка зарезервирована. Имя, роль и связи появятся только после редакционного подтверждения." },
+  { id: "redacted-03", name: "REDACTED", code: "—", work: "Архив 671", status: "Ожидает данных", role: "Не указано", description: "Карточка зарезервирована. Мы не заполняем биографию догадками или фанатскими версиями." },
+  { id: "redacted-04", name: "REDACTED", code: "—", work: "Архив 671", status: "Ожидает данных", role: "Не указано", description: "Будущая карточка персонажа с источником, произведениями, связями и предупреждением о спойлерах." },
 ];
 
 export default function CharactersClient() {
@@ -74,7 +75,7 @@ export default function CharactersClient() {
         <div className="characters-layout">
           <div className="characters-list" aria-label="Список персонажей">
             {visible.map((character) => <button type="button" key={character.id} className={`character-file${character.id === activeId ? " active" : ""}`} onClick={() => setActiveId(character.id)}>
-              <div className={`character-photo${character.status === "Ожидает данных" ? " redacted" : ""}`}><span>{character.code}</span><strong>{character.status === "Подтверждено" ? "TD" : "?"}</strong></div>
+              <div className={`character-photo${character.status === "Ожидает данных" ? " redacted" : ""}`}><span>{character.code}</span><strong>{character.status === "Подтверждено" ? quietDan.code : "?"}</strong></div>
               <div><small>{character.work}</small><h2>{character.name}</h2><p>{character.role}</p></div>
               <span className={`character-status ${character.status === "Подтверждено" ? "verified" : "pending"}`}>{character.status}</span>
             </button>)}
@@ -82,7 +83,7 @@ export default function CharactersClient() {
           </div>
 
           <aside className="character-inspector ds-panel" aria-live="polite">
-            <div className={`character-portrait${active.status === "Ожидает данных" ? " redacted" : ""}`}><small>PERSON / {active.code}</small><strong>{active.status === "Подтверждено" ? "TD" : "CLASSIFIED"}</strong><span>{active.status}</span></div>
+            <div className={`character-portrait${active.status === "Ожидает данных" ? " redacted" : ""}`}><small>PERSON / {active.code}</small><strong>{active.status === "Подтверждено" ? quietDan.code : "CLASSIFIED"}</strong><span>{active.status}</span></div>
             <div className="character-inspector-copy">
               <div className="ds-kicker">{active.work} / {active.code}</div>
               <h2>{active.name}</h2>

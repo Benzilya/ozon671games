@@ -119,7 +119,7 @@ export default function AudiobooksClient() {
           ))}
         </div>}
 
-        {hydrated && filtered.length === 0 && <div className="catalog-empty ds-panel"><strong>Ничего не найдено</strong><p>Попробуйте снять часть фильтров или изменить запрос.</p></div>}
+        {hydrated && filtered.length === 0 && <div className="catalog-empty ds-panel"><strong>Ничего не найдено</strong><p>Текущая комбинация фильтров не совпала ни с одной записью архива.</p><button className="ds-button ds-button--primary" type="button" onClick={resetFilters}>Показать весь архив</button></div>}
       </section>
     </main>
   );

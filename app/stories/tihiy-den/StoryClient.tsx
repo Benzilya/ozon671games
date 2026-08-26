@@ -99,7 +99,7 @@ export default function StoryClient() {
           <div className="story-section-head"><div><div className="ds-kicker">Case connections</div><h2>Персонажи и мир</h2></div><p>Канонические связи появятся после редакционной проверки. Подтверждённые страницы уже связаны между собой.</p></div>
           <div className="story-world-grid">
             <a className="story-world-card story-world-card-link ds-panel" href={`${publicBase}/characters.html`}><span>PERSON / 01</span><h3>Тихий Дэн</h3><p>Открыть подтверждённую карточку главного героя в архиве персонажей.</p></a>
-            <article className="story-world-card ds-panel"><span>LOCATION / WIP</span><h3>Локации</h3><p>Конкретные места будут добавлены только после проверки редакционных источников.</p></article>
+            <article className="story-world-card ds-panel"><span>LOCATION / PENDING</span><h3>Локации</h3><p>Конкретные места будут добавлены только после проверки редакционных источников.</p></article>
             <a className="story-world-card story-world-card-link ds-panel" href={`${publicBase}/universe.html`}><span>CONNECTION / OPEN</span><h3>Связи вселенной</h3><p>Перейти к карте совпадений и подтверждённым связям архива 671.</p></a>
           </div>
         </div>}

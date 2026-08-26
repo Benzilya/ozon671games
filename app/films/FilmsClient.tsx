@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { quietDan } from "../data/stories";
 
 type FilmType = "AI-концепт" | "Фанатская работа" | "Making-of";
 
@@ -16,11 +17,11 @@ type FilmRecord = {
 };
 
 const films: FilmRecord[] = [
-  { id: "td-night", title: "Тихий Дэн: Ночная смена", story: "Тихий Дэн", type: "AI-концепт", format: "Фильм", description: "Демонстрационный концепт экранизации в дождливой noir-эстетике. Не является реальной съёмкой.", tone: "red", ai: true },
+  { id: "td-night", title: "Тихий Дэн: Ночная смена", story: quietDan.title, type: "AI-концепт", format: "Фильм", description: "Демонстрационный концепт экранизации в дождливой noir-эстетике. Не является реальной съёмкой.", tone: "red", ai: true },
   { id: "nt-road", title: "Ночное такси: Последний рейс", story: "Ночное такси", type: "AI-концепт", format: "Короткий метр", description: "Визуальная концепция ночного маршрута. Видео появится только после редакционного подтверждения источника.", tone: "blue", ai: true },
   { id: "s6-signal", title: "Сириус 6Б: Сигнал", story: "Сириус 6Б", type: "AI-концепт", format: "Клип", description: "Короткая концептуальная сцена для будущего визуального раздела.", tone: "blue", ai: true },
   { id: "fan-archive", title: "Архив фанатских адаптаций", story: "Вселенная 671", type: "Фанатская работа", format: "Материал", description: "Будущая витрина работ сообщества с указанием автора, разрешения и исходной площадки.", tone: "gray", ai: false },
-  { id: "making-noir", title: "Как собирается Rain Noir", story: "Тихий Дэн", type: "Making-of", format: "Материал", description: "Место для раскадровок, тестов света, заметок и разрешённых материалов производства.", tone: "red", ai: false },
+  { id: "making-noir", title: "Как собирается Rain Noir", story: quietDan.title, type: "Making-of", format: "Материал", description: "Место для раскадровок, тестов света, заметок и разрешённых материалов производства.", tone: "red", ai: false },
 ];
 
 const filters: Array<"Все" | FilmType> = ["Все", "AI-концепт", "Фанатская работа", "Making-of"];
@@ -52,7 +53,7 @@ export default function FilmsClient() {
           <div className="films-labels"><span className="ds-pill ds-pill--signal">Создано с помощью ИИ</span><span className="ds-pill">Концепт</span><span className="ds-pill">Видео не подключено</span></div>
           <div className="films-actions"><button type="button" className="ds-button ds-button--primary" onClick={() => setActiveId("td-night")}>▶ Открыть концепт</button><a className="ds-button ds-button--ghost" href={`${publicBase}/stories/tihiy-den.html`}>К произведению</a></div>
         </div>
-        <div className="films-premiere-file">VISUAL FILE / TD-01<br/><strong>STATUS: CONCEPT</strong><br/>REAL FOOTAGE: NO</div>
+        <div className="films-premiere-file">VISUAL FILE / {quietDan.code} / CONCEPT<br/><strong>STATUS: CONCEPT</strong><br/>REAL FOOTAGE: NO</div>
       </section>
 
       {noticeOpen && <aside className="ai-disclosure" id="about-ai">
@@ -74,7 +75,7 @@ export default function FilmsClient() {
           </div>
 
           <aside className="film-inspector ds-panel" aria-live="polite">
-            <div className={`film-inspector-screen film-tone-${active.tone}`}><span>{active.type}</span><strong>{active.title}</strong><div className="film-fake-controls"><button type="button" disabled aria-label="Видео пока не подключено">▶</button><div><i/></div><small>00:00 / —</small><small>CC</small><small>1080p</small><small>⛶</small></div></div>
+            <div className={`film-inspector-screen film-tone-${active.tone}`}><span>{active.type}</span><strong>{active.title}</strong><div className="film-fake-controls"><button type="button" disabled aria-label="Видео пока не подключено">▶</button><div><i/></div><small>00:00 / —</small><small>CC</small><small>QUALITY —</small><small>⛶</small></div></div>
             <div className="film-inspector-copy">
               <div className="films-labels">{active.ai && <span className="ds-pill ds-pill--signal">Создано с помощью ИИ</span>}<span className="ds-pill">{active.type}</span><span className="ds-pill">{active.format}</span></div>
               <h2>{active.title}</h2><p>{active.description}</p>

@@ -15,7 +15,7 @@ const nav = [
   ["07", "Аккаунт", "/account.html"],
 ] as const;
 
-const universeNodes = ["Тихий Дэн", "Ночное такси", "Город", "Ёжлесово", "Сириус 6Б"];
+const universeNodes = featuredStories.slice(0, 5).map((story) => story.title);
 
 export default function HomeClient() {
   const [query, setQuery] = useState("");
@@ -55,7 +55,7 @@ export default function HomeClient() {
         </div>
         <div className="cover-rain" aria-hidden="true" />
         <div className="cover-copy">
-          <div className="archive-meta">CASE 671 / NEW YORK / NIGHT FILE</div>
+          <div className="archive-meta">ARCHIVE 671 / STORY FILE / {quietDan.code}</div>
           <h1 id="hero-title"><span>ТИХИЙ</span><b>ДЭН</b></h1>
           <p className="cover-deck">{quietDan.description}</p>
           <blockquote>Некоторые истории начинаются с выстрела. Эта — со швабры.</blockquote>
@@ -64,18 +64,18 @@ export default function HomeClient() {
             <a href={`${publicBase}/stories/tihiy-den.html`}>Открыть дело ↗</a>
           </div>
         </div>
-        <aside className="cover-dossier" aria-label="Сведения о деле">
-          <span>FILE</span><strong>TD-671-01</strong>
-          <span>FORM</span><strong>AUDIO / VIDEO / PRINT</strong>
-          <span>STATUS</span><strong>ARCHIVE OPEN</strong>
-          <span>TIME</span><strong>03:17 AM</strong>
+        <aside className="cover-dossier" aria-label="Сведения о произведении">
+          <span>FILE</span><strong>{quietDan.code}</strong>
+          <span>FORM</span><strong>{quietDan.formats.join(" / ").toUpperCase()}</strong>
+          <span>STATUS</span><strong>{quietDan.status.toUpperCase()}</strong>
+          <span>YEAR</span><strong>{quietDan.year.toUpperCase()}</strong>
         </aside>
-        <div className="cover-stamp" aria-hidden="true">ДЕЛО<br />ОТКРЫТО</div>
+        <div className="cover-stamp" aria-hidden="true">АРХИВ<br />671</div>
         <div className="cover-caption">Обычный человек.<br />Необычная история.</div>
       </section>
 
       <section className="tape-strip" aria-label="Продолжить прослушивание">
-        <div className="tape-id">REC / 01</div>
+        <div className="tape-id">REC / DEMO</div>
         <div className="tape-copy"><small>ПРОДОЛЖИТЬ</small><strong>Тихий Дэн</strong><span>демонстрационный фрагмент</span></div>
         <div className="tape-wave" aria-hidden="true">▁▂▅▃▇▄▂▆▃▁▅▇▃▆▂▁▃▅▇▄▂▆▁▃▇▅▂▁▆▃▅</div>
         <button type="button" onClick={() => setPlaying(!playing)} aria-label={playing ? "Пауза" : "Воспроизвести"}>{playing ? "Ⅱ" : "▶"}</button>
@@ -118,11 +118,10 @@ export default function HomeClient() {
 
       <section className="evidence-board" id="world">
         <header className="editorial-heading inverse">
-          <div><span>SECTION 03 / CONNECTIONS</span><h2>Карта совпадений</h2></div>
-          <p>Герои, места и события лежат не в аккуратной схеме, а в связях, которые постепенно становятся видимыми.</p>
+          <div><span>SECTION 03 / UNIVERSE</span><h2>Карта архива</h2></div>
+          <p>Произведения собраны в одном поле. Персонажи, места и межкнижные связи добавляются только после подтверждения редакционными материалами.</p>
         </header>
         <a className="evidence-canvas" href={`${publicBase}/universe.html`} aria-label="Открыть карту вселенной">
-          <span className="thread t1" /><span className="thread t2" /><span className="thread t3" />
           {universeNodes.map((node, i) => <span className={`evidence-note note-${i + 1}`} key={node}><small>REF / 0{i + 1}</small><b>{node}</b></span>)}
           <span className="evidence-center">671<br /><small>ARCHIVE</small></span>
         </a>

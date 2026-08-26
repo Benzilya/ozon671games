@@ -72,6 +72,7 @@ const server = createServer(async (request, response) => {
 await new Promise((resolve) => server.listen(port, "127.0.0.1", resolve));
 const browser = await chromium.launch({ headless: true });
 const failures = [];
+console.log(`Browser quality coverage: ${routes.length} routes × 2 viewports = ${routes.length * 2} audits.`);
 
 async function auditRoute(route, viewport) {
   const context = await browser.newContext({ viewport });

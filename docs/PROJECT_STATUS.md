@@ -95,7 +95,7 @@
 - GitHub Pages deploy workflow;
 - `cloudflare-config-smoke`: synthetic production env → Wrangler config generation → Cloudflare Vite build → `wrangler deploy --dry-run` без production secrets;
 - browser gate дедуплицирует все same-origin `href` и проверяет каждый уникальный внутренний target на отсутствие 4xx/5xx;
-- regression tests блокируют возврат выдуманных псевдоканонических file IDs, цен, cross-story claims, немаркированного interface copy, generic public WIP labels и dead disabled CTA.
+- regression tests блокируют возврат выдуманных псевдоканонических file IDs, цен, cross-story claims, немаркированного interface copy, generic public WIP labels, dead disabled CTA, тупиковых empty states и неправильных recorder destinations.
 
 ### Этап 23 — production hardening
 
@@ -108,7 +108,7 @@
 - post-deploy smoke checks для public/admin API;
 - activation runbook в `docs/CLOUDFLARE_ACTIVATION.md`.
 
-### Этап 24 — Living Archive / визуальная и контентная целостность
+### Этап 24 — Living Archive / визуальная и продуктовая целостность
 
 - главная закреплена в концепции живого криминального архива;
 - hero «Тихого Дэна» усилен актуальным фоном и noir-типографикой, пересечение строк заголовка устранено;
@@ -121,7 +121,9 @@
 - добавлен контекстный `CASE PATH` между публичными тематическими разделами с keyboard focus, mobile clearance и reduced-transparency fallback;
 - generic `WIP / WORK IN PROGRESS` убран из публичных поверхностей в пользу точных архивных статусов, а реальные `DEMO / CMS / PENDING` ограничения сохранены;
 - dead disabled CTA в аудиокаталоге и сообществе заменены на честные статусы или реальные доступные действия;
-- пустые состояния глобального поиска, аудиокаталога и кадрового архива получили явные recovery actions: очистить запрос/фильтры или перейти в существующий связанный раздел;
+- пустые состояния глобального поиска, аудиокаталога и кадрового архива получили recovery actions: очистить запрос/фильтры или перейти в существующий связанный раздел;
+- нижний recorder на главной теперь открывает контекст реально выбранной истории, а для истории без отдельной страницы возвращает пользователя в отфильтрованный аудиоархив;
+- playback control recorder получил контекстный accessible label с названием активной истории;
 - account/admin намеренно не превращаются в художественные «досье», чтобы сохранить функциональную ясность;
 - визуальные и контентные изменения проходят Validate project, Product tests, Production dependency audit, Cloudflare dry-run и полный Browser quality gate перед merge.
 
@@ -140,9 +142,9 @@
 
 ## Текущая задача
 
-**Этап 24.1 — дальнейшая продуктовая полировка статического frontend без внешних credentials.**
+**Этап 24 — репозиторная продуктовая полировка статического frontend практически завершена.**
 
-До появления production Cloudflare/OIDC ресурсов работа продолжается в репозитории только там, где есть реальный подтверждаемый выигрыш: UX-переходы, визуальная целостность, content-safety/rights-safe copy, regression tests, accessibility и performance. Неподтверждённые связи/метаданные не используются для искусственного наполнения интерфейса.
+До появления production Cloudflare/OIDC ресурсов дальнейшие изменения в репозитории выполняются только там, где есть конкретный подтверждаемый выигрыш: исправление найденного UX-дефекта, права/контент, accessibility, performance или regression coverage. Неподтверждённые связи/метаданные не используются для искусственного наполнения интерфейса.
 
 Параллельный инфраструктурный milestone остаётся: **Этап 14.4 — Активация production-backend в Cloudflare**.
 

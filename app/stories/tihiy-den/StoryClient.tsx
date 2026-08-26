@@ -25,7 +25,7 @@ export default function StoryClient() {
         <div className="story-figure" aria-hidden="true" />
         <a className="story-back" href="../../">← Архив 671</a>
         <div className="story-hero-copy">
-          <div className="case-label">FILE / TD-671 · QUIET DAN</div>
+          <div className="case-label">FILE / {quietDan.code} · QUIET DAN</div>
           <h1>ТИХИЙ <span>ДЭН</span></h1>
           <p>{quietDan.description}</p>
           <div className="story-tags">
@@ -47,7 +47,7 @@ export default function StoryClient() {
       </section>
 
       <section className="story-player ds-panel" aria-label="Аудиоплеер">
-        <div className="story-player-cover">TD</div>
+        <div className="story-player-cover">{quietDan.code}</div>
         <div className="story-player-copy">
           <small>Сейчас выбрано · DEMO</small>
           <strong>{activeChapter?.title}</strong>
@@ -113,15 +113,15 @@ export default function StoryClient() {
           <div className="story-section-head"><div><div className="ds-kicker">Case connections</div><h2>Персонажи и мир</h2></div><p>Канонические связи появятся после редакционной проверки. Пока показываем структуру раздела.</p></div>
           <div className="story-world-grid">
             <article className="story-world-card ds-panel"><span>PERSON / 01</span><h3>Тихий Дэн</h3><p>Главный герой произведения. Подробная карточка будет заполнена подтверждёнными сведениями.</p></article>
-            <article className="story-world-card ds-panel"><span>LOCATION / 01</span><h3>Ночной город</h3><p>Атмосферная интерфейсная категория; конкретные локации будут добавлены после проверки источников.</p></article>
-            <article className="story-world-card ds-panel"><span>CONNECTION / 671</span><h3>Связи вселенной</h3><p>Будущая точка входа в карту персонажей, событий, пасхалок и альтернативных версий.</p></article>
+            <article className="story-world-card ds-panel"><span>LOCATION / WIP</span><h3>Локации</h3><p>Конкретные места будут добавлены только после проверки редакционных источников.</p></article>
+            <article className="story-world-card ds-panel"><span>CONNECTION / WIP</span><h3>Связи вселенной</h3><p>Карта связей заполняется только подтверждёнными персонажами, событиями и материалами.</p></article>
           </div>
         </div>}
       </section>
 
       <section className="story-quote-band"><small>CASE NOTE / INTERFACE COPY</small><p>Некоторые истории начинаются с выстрела. Эта начинается с обычной работы.</p><span>Атмосферный текст сайта, не цитата из произведения.</span></section>
 
-      <footer className="story-footer"><a href="../../">OZON 671 / STORIES</a><p>Материалы подключаются только при наличии прав. AI-контент маркируется отдельно.</p><span>FILE TD-671</span></footer>
+      <footer className="story-footer"><a href="../../">OZON 671 / STORIES</a><p>Материалы подключаются только при наличии прав. AI-контент маркируется отдельно.</p><span>FILE {quietDan.code}</span></footer>
     </main>
   );
 }

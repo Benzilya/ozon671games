@@ -10,8 +10,8 @@ type Product = { id:string; title:string; category:Category; code:string; descri
 type CartItem = { id:string; variant:string; qty:number };
 
 const products: Product[] = [
-  { id:"quiet-dan-book", title:"Тихий Дэн — печатное издание", category:"Печатные издания", code:"TD / BOOK", description:"Концепт карточки будущего печатного издания: твёрдый переплёт, тиснение и полноцветные материалы — только после подтверждения финальной комплектации.", variants:["Базовое издание","Коллекционное издание"], status:"Цена и тираж — из CMS" },
-  { id:"quiet-dan-collector", title:"Тихий Дэн — коллекционный комплект", category:"Коллекционное", code:"TD / COLLECTOR", description:"Премиальный комплект с будущими вариантами вложений. Состав, автограф и лимит не фиксируются до подтверждения.", variants:["Стандарт","Расширенный комплект"], status:"Предзаказ после настройки CMS" },
+  { id:"quiet-dan-book", title:"Тихий Дэн — печатное издание", category:"Печатные издания", code:"TD / BOOK", description:"Печатное направление «Тихого Дэна»: твёрдый переплёт, тиснение, иллюстрации и автограф. Точная комплектация, тираж, цена и наличие должны поступать из подтверждённых данных/CMS.", variants:["Комплектация — из CMS"], status:"Цена и тираж — из CMS" },
+  { id:"quiet-dan-collector", title:"Тихий Дэн — коллекционный комплект", category:"Коллекционное", code:"TD / COLLECTOR", description:"Коллекционное/лимитированное направление издания. Точный состав, количество экземпляров и доступность не фиксируются без подтверждённых данных.", variants:["Комплектация — из CMS"], status:"Доступность — из CMS" },
   { id:"archive-poster", title:"Архив 671 — постер", category:"Постеры", code:"671 / POSTER", description:"Дизайнерский постер в стилистике архива 671. Финальный арт должен использоваться только при наличии прав.", variants:["A3","A2"], status:"Цена — из CMS" },
   { id:"archive-shirt", title:"Archive 671 — футболка", category:"Одежда", code:"671 / WEAR", description:"Интерфейсная карточка будущего мерча. Макеты, ткань и размерная сетка будут подтверждены отдельно.", variants:["S","M","L","XL"], status:"Наличие — из CMS" },
   { id:"case-pin", title:"Case 671 — аксессуар", category:"Аксессуары", code:"671 / PIN", description:"Заглушка категории аксессуаров без фиксации материалов и комплектации.", variants:["Версия 01"], status:"Характеристики — из CMS" },
@@ -68,8 +68,8 @@ export default function ShopClient() {
     </section>
 
     <section className="shop-featured">
-      <div className="shop-book-visual"><small>COLLECTOR FILE / TD-671</small><strong>ТИХИЙ<br/>ДЭН</strong><span>CONCEPT EDITION</span></div>
-      <div><div className="ds-kicker">Featured artifact</div><h2>Печатное издание «Тихий Дэн»</h2><p>Карточка готова для будущей галереи, комплектации, вариантов издания, реального остатка и доставки. Сейчас интерфейс намеренно не показывает выдуманную цену.</p><div className="shop-specs"><span>Твёрдый переплёт — концепт</span><span>Тиснение — концепт</span><span>Иллюстрации — только с правами</span><span>Тираж — из CMS</span></div><button className="ds-button ds-button--primary" type="button" onClick={()=>add(products[0],products[0].variants[0])}>Добавить демо-предзаказ</button></div>
+      <div className="shop-book-visual"><small>COLLECTOR FILE / {products[0].code}</small><strong>ТИХИЙ<br/>ДЭН</strong><span>CONCEPT EDITION</span></div>
+      <div><div className="ds-kicker">Featured artifact</div><h2>Печатное издание «Тихий Дэн»</h2><p>Карточка готова для будущей галереи, комплектации, вариантов издания, реального остатка и доставки. Сейчас интерфейс намеренно не показывает выдуманную цену.</p><div className="shop-specs"><span>Твёрдый переплёт</span><span>Тиснение</span><span>Иллюстрации</span><span>Автограф</span><span>Тираж — из CMS</span></div><button className="ds-button ds-button--primary" type="button" onClick={()=>add(products[0],products[0].variants[0])}>Добавить демо-предзаказ</button></div>
     </section>
 
     <section className="shop-catalog">

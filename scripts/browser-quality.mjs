@@ -8,14 +8,20 @@ const root = new URL("../dist/client/", import.meta.url).pathname;
 const port = 4173;
 const routes = [
   "/",
+  "/audiobooks.html",
   "/stories/tihiy-den.html",
   "/films.html",
+  "/characters.html",
+  "/timeline.html",
+  "/universe.html",
   "/shop.html",
+  "/community.html",
+  "/search.html",
   "/account.html",
   "/admin.html",
   "/legal.html",
 ];
-const mobileRoutes = ["/", "/stories/tihiy-den.html", "/shop.html"];
+const mobileRoutes = routes;
 const seriousImpacts = new Set(["serious", "critical"]);
 
 const mime = {

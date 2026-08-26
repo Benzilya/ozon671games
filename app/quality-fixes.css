@@ -54,6 +54,16 @@
   margin-top: .08em;
 }
 
+.archive-home .cover-copy blockquote small {
+  display: block;
+  margin-bottom: 7px;
+  color: #aaa398;
+  font: 700 7px/1.35 var(--mono);
+  font-style: normal;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
 .story-page .story-player-copy small,
 .story-page .story-player-copy span,
 .story-page .story-progress-meta,

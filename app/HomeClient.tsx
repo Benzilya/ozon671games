@@ -148,7 +148,7 @@ export default function HomeClient() {
       <footer className="archive-footer">
         <div><strong>671</strong><span>OZON STORIES / NIGHT ARCHIVE</span></div>
         <p>Самостоятельная цифровая вселенная Ozon671Games. Не связана с маркетплейсом OZON.</p>
-        <span>© 2026 / WORK IN PROGRESS</span>
+        <span>© 2026 / NIGHT ARCHIVE</span>
       </footer>
 
       <div className={`recorder${playing ? " is-visible" : ""}`} aria-hidden={!playing}>

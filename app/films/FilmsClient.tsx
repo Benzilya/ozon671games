@@ -96,7 +96,7 @@ export default function FilmsClient() {
         <div className="scene-strip">{["Ночной город", "Коридор", "Дождь", "Красный свет"].map((scene,index)=><article key={scene}><div><span>SCENE 0{index+1}</span><strong>{scene}</strong></div><p>Демонстрационная сцена</p></article>)}</div>
       </section>
 
-      <footer className="films-footer"><a href={`${publicBase}/`}>OZON 671 / STORIES</a><p>AI-контент маркируется. Фанатские и официальные материалы не смешиваются.</p><span>VISUAL ARCHIVE · WIP</span></footer>
+      <footer className="films-footer"><a href={`${publicBase}/`}>OZON 671 / STORIES</a><p>AI-контент маркируется. Фанатские и официальные материалы не смешиваются.</p><span>VISUAL ARCHIVE · ACTIVE INDEX</span></footer>
     </main>
   );
 }

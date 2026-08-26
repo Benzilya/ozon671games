@@ -113,7 +113,7 @@ export default function AudiobooksClient() {
                 <div className="catalog-meta"><span>Год: {story.year}</span><span>Длительность: из CMS</span></div>
                 {story.slug === "tihiy-den"
                   ? <a className="ds-button ds-button--primary" href={`${publicBase}/stories/tihiy-den.html`}>Открыть дело</a>
-                  : <button className="ds-button ds-button--ghost" type="button" disabled>Карточка готовится</button>}
+                  : <span className="ds-pill">Карточка ожидает данных</span>}
               </div>
             </article>
           ))}

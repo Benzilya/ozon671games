@@ -11,7 +11,7 @@ test("browser QA uses pinned Playwright and axe versions", () => {
   assert.match(workflow, /playwright install --with-deps chromium/);
 });
 
-test("browser QA covers runtime, performance and accessibility failures", () => {
+test("browser QA covers runtime, performance, accessibility and internal link failures", () => {
   assert.match(script, /pageerror/);
   assert.match(script, /response\.status\(\) >= 400/);
   assert.match(script, /horizontal overflow/);
@@ -20,6 +20,9 @@ test("browser QA covers runtime, performance and accessibility failures", () => 
   assert.match(script, /navigation budget exceeded/);
   assert.match(script, /AxeBuilder/);
   assert.match(script, /seriousImpacts/);
+  assert.match(script, /checkedInternalLinks/);
+  assert.match(script, /context\.request\.get/);
+  assert.match(script, /internal link .* returned/);
 });
 
 test("browser QA covers every application route on desktop and mobile", () => {

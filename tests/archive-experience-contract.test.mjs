@@ -9,6 +9,7 @@ test("root layout keeps the living archive atmosphere mounted", () => {
   const layout = readSource("app/layout.tsx");
   assert.match(layout, /SiteAtmosphere/);
   assert.match(layout, /archive-experience\.css/);
+  assert.match(layout, /inner-archive\.css/);
   assert.match(layout, /<SiteAtmosphere\s*\/>/);
 });
 
@@ -28,4 +29,17 @@ test("archive continuity CSS preserves readable atmosphere controls and mobile d
   assert.match(css, /font-size:9px/);
   assert.match(css, /bottom:70px/);
   assert.match(css, /archive-index:before/);
+});
+
+test("public inner pages stay inside the living archive visual system", () => {
+  const css = readSource("app/inner-archive.css");
+  assert.match(css, /671 \/ ACTIVE ARCHIVE/);
+  assert.match(css, /INDEX \/ FILTERS/);
+  assert.match(css, /ACTIVE FILE/);
+  assert.match(css, /\.catalog-page/);
+  assert.match(css, /\.films-page/);
+  assert.match(css, /\.characters-page/);
+  assert.match(css, /\.universe-page/);
+  assert.doesNotMatch(css, /\.admin-page/);
+  assert.doesNotMatch(css, /\.account-page/);
 });

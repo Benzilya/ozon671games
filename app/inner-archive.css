@@ -1,1 +1,20 @@
-/* placeholder */
+/* Inner archive continuity — keep every public section inside the same 671 case-file world. */
+:where(.catalog-page,.films-page,.characters-page,.timeline-page,.universe-page,.shop-page,.community-page,.story-page){position:relative;isolation:isolate;background:#090908}
+:where(.catalog-page,.films-page,.characters-page,.timeline-page,.universe-page,.shop-page,.community-page,.story-page)::before{content:"671 / ACTIVE ARCHIVE";position:fixed;left:12px;top:50%;z-index:30;transform:translateY(-50%) rotate(-90deg);transform-origin:left top;color:#6f685e;font:700 9px/1 var(--mono);letter-spacing:.2em;pointer-events:none}
+:where(.catalog-hero,.films-premiere,.characters-hero,.timeline-hero,.universe-hero,.shop-hero,.community-hero,.story-hero){position:relative;border-bottom:1px solid rgba(232,225,212,.16)}
+:where(.catalog-hero,.films-premiere,.characters-hero,.timeline-hero,.universe-hero,.shop-hero,.community-hero,.story-hero)::before{content:"";position:absolute;left:var(--page-gutter);right:var(--page-gutter);bottom:22px;height:1px;background:linear-gradient(90deg,#a83229 0 74px,rgba(232,225,212,.14) 74px 100%);pointer-events:none}
+:where(.catalog-hero,.films-premiere,.characters-hero,.timeline-hero,.universe-hero,.shop-hero,.community-hero,.story-hero) .case-label{display:inline-flex;align-items:center;gap:12px;font-size:10px;line-height:1.45;color:#a9a195}
+:where(.catalog-hero,.films-premiere,.characters-hero,.timeline-hero,.universe-hero,.shop-hero,.community-hero,.story-hero) .case-label::before{content:"";width:34px;height:1px;background:#b93027}
+:where(.catalog-page,.films-page,.characters-page,.timeline-page,.universe-page,.shop-page,.community-page,.story-page) h1{letter-spacing:-.055em}
+:where(.catalog-page,.films-page,.characters-page,.timeline-page,.universe-page,.shop-page,.community-page,.story-page) h2{letter-spacing:-.035em}
+:where(.catalog-card,.film-card,.character-file,.timeline-card,.universe-card,.shop-card,.community-card){position:relative;overflow:hidden;border-color:rgba(232,225,212,.14)!important;background:linear-gradient(145deg,rgba(255,255,255,.025),transparent 28%),#10100e!important}
+:where(.catalog-card,.film-card,.character-file,.timeline-card,.universe-card,.shop-card,.community-card)::before{content:"";position:absolute;left:0;top:0;width:54px;height:2px;background:#a83229;opacity:.9;pointer-events:none}
+:where(.catalog-card,.film-card,.character-file,.timeline-card,.universe-card,.shop-card,.community-card):hover{border-color:rgba(232,225,212,.28)!important}
+:where(.catalog-tools,.characters-tools,.films-filters){position:relative;border-top:1px solid rgba(232,225,212,.13);border-bottom:1px solid rgba(232,225,212,.13);background:#0b0b0a}
+:where(.catalog-tools,.characters-tools,.films-filters)::before{content:"INDEX / FILTERS";position:absolute;left:0;top:-18px;color:#6f685e;font:700 8px var(--mono);letter-spacing:.16em}
+:where(.film-inspector,.character-inspector){border-top:2px solid #a83229!important;box-shadow:0 28px 80px rgba(0,0,0,.4)!important}
+:where(.film-inspector,.character-inspector)::before{content:"ACTIVE FILE";position:absolute;right:18px;top:12px;z-index:3;color:#777168;font:700 8px var(--mono);letter-spacing:.16em}
+:where(.catalog-summary,.films-section-head,.characters-rules>div:first-child){border-left:1px solid #a83229;padding-left:16px}
+:where(.catalog-page,.films-page,.characters-page,.timeline-page,.universe-page,.shop-page,.community-page,.story-page) :where(p,li,dd){text-wrap:pretty}
+@media(max-width:900px){:where(.catalog-page,.films-page,.characters-page,.timeline-page,.universe-page,.shop-page,.community-page,.story-page)::before{display:none}:where(.catalog-hero,.films-premiere,.characters-hero,.timeline-hero,.universe-hero,.shop-hero,.community-hero,.story-hero)::before{left:18px;right:18px}.film-inspector::before,.character-inspector::before{font-size:7px}}
+@media(prefers-reduced-motion:reduce){:where(.catalog-card,.film-card,.character-file,.timeline-card,.universe-card,.shop-card,.community-card){transition:none!important}}

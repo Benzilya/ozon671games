@@ -33,6 +33,10 @@ export default function HomeClient() {
     setPlaying(true);
   };
 
+  const activeHref = active.slug === "tihiy-den"
+    ? `${publicBase}/stories/tihiy-den.html`
+    : `${publicBase}/audiobooks.html?q=${encodeURIComponent(active.title)}`;
+
   return (
     <main className="archive-home">
       <header className="archive-header">
@@ -140,7 +144,7 @@ export default function HomeClient() {
       </section>
 
       <section className="fan-wire" id="community">
-        <div className="fan-title"><span>SECTION 05 / COMMUNITY</span><h2>РЕСПЕКТ ФАНАМ</h2><em>Стандартно.</em></div>
+        <div className="fan-title"><span>SECTION 05 / COMMUNITY</span><h2>РЕСПЕКТ ФАНАМ</h2><em>Открытый канал.</em></div>
         <div className="fan-copy"><p>Стримы, фан-арты, теории, премьеры и материалы людей, которые не могут остановиться.</p><a href={`${publicBase}/community.html`}>ВОЙТИ В СООБЩЕСТВО →</a></div>
         <div className="fan-links"><a href="https://youtube.com/@ozon671games3" target="_blank" rel="noreferrer">YOUTUBE ↗</a><a href="https://t.me/ozon671games3official" target="_blank" rel="noreferrer">TELEGRAM ↗</a><a href="https://boosty.to/ozon671games3" target="_blank" rel="noreferrer">BOOSTY ↗</a></div>
       </section>
@@ -152,7 +156,7 @@ export default function HomeClient() {
       </footer>
 
       <div className={`recorder${playing ? " is-visible" : ""}`} aria-hidden={!playing}>
-        <div className="rec-dot">● REC</div><div className="rec-track"><strong>{active.title}</strong><span>DEMO / локальный прогресс</span></div><button type="button" onClick={() => setPlaying(!playing)}>{playing ? "Ⅱ" : "▶"}</button><div className="rec-wave">▂▅▃▇▄▂▆▁▃▅▇▂▆▃▁▅</div><a href={`${publicBase}/stories/tihiy-den.html`}>OPEN ↗</a><button type="button" onClick={() => setPlaying(false)} aria-label="Закрыть">×</button>
+        <div className="rec-dot">● REC</div><div className="rec-track"><strong>{active.title}</strong><span>DEMO / локальный прогресс</span></div><button type="button" onClick={() => setPlaying(!playing)} aria-label={playing ? `Пауза: ${active.title}` : `Воспроизвести: ${active.title}`}>{playing ? "Ⅱ" : "▶"}</button><div className="rec-wave">▂▅▃▇▄▂▆▁▃▅▇▂▆▃▁▅</div><a href={activeHref}>OPEN ↗</a><button type="button" onClick={() => setPlaying(false)} aria-label="Закрыть">×</button>
       </div>
     </main>
   );

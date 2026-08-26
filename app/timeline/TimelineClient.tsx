@@ -76,7 +76,7 @@ export default function TimelineClient() {
       </section>
 
       <section className="timeline-legend"><div><strong>КАК ЧИТАТЬ ЛЕНТУ</strong><p>Красный узел — подтверждённая точка. Серый — место под редакционные данные. Пунктирный — альтернативная версия, не смешанная с каноном.</p></div><div><strong>ПОЧЕМУ НЕТ ДАТ?</strong><p>Мы не придумываем годы и последовательность событий, пока они не подтверждены материалами проекта.</p></div></section>
-      <footer className="timeline-footer"><a href={`${publicBase}/`}>OZON 671 / STORIES</a><p>Хронология обновляется только после редакционной проверки.</p><span>CHRONOLOGY · WIP</span></footer>
+      <footer className="timeline-footer"><a href={`${publicBase}/`}>OZON 671 / STORIES</a><p>Хронология обновляется только после редакционной проверки.</p><span>CHRONOLOGY · VERIFIED LAYER</span></footer>
     </main>
   );
 }

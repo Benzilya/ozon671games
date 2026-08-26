@@ -109,7 +109,7 @@ export default function CharactersClient() {
         <div className="characters-rule-grid"><article><strong>01</strong><h3>Источник</h3><p>Каждый факт должен иметь редакционное происхождение или ссылку на разрешённый материал.</p></article><article><strong>02</strong><h3>Спойлеры</h3><p>Сюжетные детали в будущем будут закрываться отдельным переключателем.</p></article><article><strong>03</strong><h3>Фанатские версии</h3><p>Гипотезы сообщества будут визуально отделены от официальных сведений.</p></article></div>
       </section>
 
-      <footer className="characters-footer"><a href={`${publicBase}/`}>OZON 671 / STORIES</a><p>Персонажи добавляются только после подтверждения сведений.</p><span>PERSONNEL ARCHIVE · WIP</span></footer>
+      <footer className="characters-footer"><a href={`${publicBase}/`}>OZON 671 / STORIES</a><p>Персонажи добавляются только после подтверждения сведений.</p><span>PERSONNEL ARCHIVE · VERIFIED INDEX</span></footer>
     </main>
   );
 }

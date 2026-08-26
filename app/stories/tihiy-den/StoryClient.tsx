@@ -11,6 +11,7 @@ const demoChapters: Array<PlayerChapter & { label: string }> = [
 ];
 
 const storageKey = "ozon671:player:tihiy-den";
+const publicBase = process.env.GITHUB_ACTIONS === "true" ? "/ozon671games" : "";
 
 export default function StoryClient() {
   const [tab, setTab] = useState<"chapters" | "media" | "world">("chapters");
@@ -61,19 +62,8 @@ export default function StoryClient() {
           <button className="story-mini-control" type="button" onClick={player.nextChapter} aria-label="Следующая глава">|›</button>
         </div>
         <div className="story-progress story-progress--full">
-          <input
-            type="range"
-            min="0"
-            max="100"
-            step="0.1"
-            value={player.progressPercent}
-            onChange={(event) => player.seekToPercent(Number(event.target.value))}
-            aria-label="Позиция воспроизведения"
-          />
-          <div className="story-progress-meta">
-            <span>{formatPlayerTime(player.positionSeconds)} / {formatPlayerTime(player.durationSeconds)} · демо-таймлайн</span>
-            <span>{Math.round(player.progressPercent)}% · localStorage</span>
-          </div>
+          <input type="range" min="0" max="100" step="0.1" value={player.progressPercent} onChange={(event) => player.seekToPercent(Number(event.target.value))} aria-label="Позиция воспроизведения" />
+          <div className="story-progress-meta"><span>{formatPlayerTime(player.positionSeconds)} / {formatPlayerTime(player.durationSeconds)} · демо-таймлайн</span><span>{Math.round(player.progressPercent)}% · localStorage</span></div>
         </div>
         <span className="story-rec">REC</span>
       </section>
@@ -94,27 +84,23 @@ export default function StoryClient() {
 
         {tab === "chapters" && <div className="story-tab-panel">
           <div className="story-section-head"><div><div className="ds-kicker">Audio log / Demo</div><h2>Главы</h2></div><p>Названия и длительности ниже — только интерфейсные демо-данные, а не официальные сведения.</p></div>
-          <div className="chapter-list">
-            {demoChapters.map((chapter, index) => <button type="button" className={player.chapterIndex === index ? "chapter-row active" : "chapter-row"} key={chapter.id} onClick={() => player.selectChapter(index)}>
-              <span>{String(index + 1).padStart(2, "0")}</span><div><small>{chapter.label} · demo {formatPlayerTime(chapter.durationSeconds)}</small><strong>{chapter.title}</strong></div><i>{player.chapterIndex === index && player.playing ? "Ⅱ" : "▶"}</i>
-            </button>)}
-          </div>
+          <div className="chapter-list">{demoChapters.map((chapter, index) => <button type="button" className={player.chapterIndex === index ? "chapter-row active" : "chapter-row"} key={chapter.id} onClick={() => player.selectChapter(index)}><span>{String(index + 1).padStart(2, "0")}</span><div><small>{chapter.label} · demo {formatPlayerTime(chapter.durationSeconds)}</small><strong>{chapter.title}</strong></div><i>{player.chapterIndex === index && player.playing ? "Ⅱ" : "▶"}</i></button>)}</div>
         </div>}
 
         {tab === "media" && <div className="story-tab-panel">
           <div className="story-section-head"><div><div className="ds-kicker">Visual evidence</div><h2>Видео и материалы</h2></div><p>Реальные ролики и иллюстрации подключаются только с разрешением правообладателей.</p></div>
           <div className="story-media-grid">
-            <article className="story-media-card ds-panel"><div className="story-media-frame"><span>AI CONCEPT</span><strong>ТИХИЙ ДЭН<br/>Ночная смена</strong></div><div><span className="ds-pill ds-pill--signal">Создано с помощью ИИ</span><h3>Концепт визуальной адаптации</h3><p>Демонстрационная карточка будущего AI-фильма. Не выдаётся за реальные съёмки.</p></div></article>
+            <a className="story-media-card story-media-card-link ds-panel" href={`${publicBase}/films.html`}><div className="story-media-frame"><span>AI CONCEPT</span><strong>ТИХИЙ ДЭН<br/>Ночная смена</strong></div><div><span className="ds-pill ds-pill--signal">Создано с помощью ИИ</span><h3>Концепт визуальной адаптации</h3><p>Открыть связанное дело в визуальном архиве. Не выдаётся за реальные съёмки.</p></div></a>
             <article className="story-media-card ds-panel"><div className="story-media-frame story-media-frame--notes"><span>MAKING OF</span><strong>АРХИВ<br/>МАТЕРИАЛОВ</strong></div><div><span className="ds-pill">Редакционный материал</span><h3>Как создаётся атмосфера</h3><p>Место для разрешённых эскизов, раскадровок и комментариев команды.</p></div></article>
           </div>
         </div>}
 
         {tab === "world" && <div className="story-tab-panel">
-          <div className="story-section-head"><div><div className="ds-kicker">Case connections</div><h2>Персонажи и мир</h2></div><p>Канонические связи появятся после редакционной проверки. Пока показываем структуру раздела.</p></div>
+          <div className="story-section-head"><div><div className="ds-kicker">Case connections</div><h2>Персонажи и мир</h2></div><p>Канонические связи появятся после редакционной проверки. Подтверждённые страницы уже связаны между собой.</p></div>
           <div className="story-world-grid">
-            <article className="story-world-card ds-panel"><span>PERSON / 01</span><h3>Тихий Дэн</h3><p>Главный герой произведения. Подробная карточка будет заполнена подтверждёнными сведениями.</p></article>
+            <a className="story-world-card story-world-card-link ds-panel" href={`${publicBase}/characters.html`}><span>PERSON / 01</span><h3>Тихий Дэн</h3><p>Открыть подтверждённую карточку главного героя в архиве персонажей.</p></a>
             <article className="story-world-card ds-panel"><span>LOCATION / WIP</span><h3>Локации</h3><p>Конкретные места будут добавлены только после проверки редакционных источников.</p></article>
-            <article className="story-world-card ds-panel"><span>CONNECTION / WIP</span><h3>Связи вселенной</h3><p>Карта связей заполняется только подтверждёнными персонажами, событиями и материалами.</p></article>
+            <a className="story-world-card story-world-card-link ds-panel" href={`${publicBase}/universe.html`}><span>CONNECTION / OPEN</span><h3>Связи вселенной</h3><p>Перейти к карте совпадений и подтверждённым связям архива 671.</p></a>
           </div>
         </div>}
       </section>

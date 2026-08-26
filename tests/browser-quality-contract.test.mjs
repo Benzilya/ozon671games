@@ -22,11 +22,24 @@ test("browser QA covers runtime, performance and accessibility failures", () => 
   assert.match(script, /seriousImpacts/);
 });
 
-test("browser QA covers core product routes and mobile viewports", () => {
-  assert.match(script, /\/stories\/tihiy-den\.html/);
-  assert.match(script, /\/films\.html/);
-  assert.match(script, /\/shop\.html/);
-  assert.match(script, /\/account\.html/);
-  assert.match(script, /\/admin\.html/);
+test("browser QA covers every application route on desktop and mobile", () => {
+  for (const route of [
+    "audiobooks",
+    "stories/tihiy-den",
+    "films",
+    "characters",
+    "timeline",
+    "universe",
+    "shop",
+    "community",
+    "search",
+    "account",
+    "admin",
+    "legal",
+  ]) {
+    assert.match(script, new RegExp(`/${route.replace("/", "\\/")}\\.html`));
+  }
+  assert.match(script, /const mobileRoutes = routes;/);
   assert.match(script, /width: 390/);
+  assert.match(script, /width: 1440/);
 });

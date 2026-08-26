@@ -34,6 +34,7 @@ export default function FilmsClient() {
 
   const visible = useMemo(() => filter === "Все" ? films : films.filter((film) => film.type === filter), [filter]);
   const active = films.find((film) => film.id === activeId) ?? films[0];
+  const isQuietDan = active.story === "Тихий Дэн";
 
   return (
     <main className="films-page">
@@ -80,6 +81,11 @@ export default function FilmsClient() {
               <div className="films-labels">{active.ai && <span className="ds-pill ds-pill--signal">Создано с помощью ИИ</span>}<span className="ds-pill">{active.type}</span><span className="ds-pill">{active.format}</span></div>
               <h2>{active.title}</h2><p>{active.description}</p>
               <dl><div><dt>Авторство</dt><dd>Будет указано у реального материала</dd></div><div><dt>Источник</dt><dd>Будет указан после проверки</dd></div><div><dt>Статус</dt><dd>Демонстрационная карточка</dd></div></dl>
+              <div className="case-crosslinks" aria-label="Связанные дела">
+                {isQuietDan && <a href={`${publicBase}/stories/tihiy-den.html`}>Произведение / TD</a>}
+                {isQuietDan && <a href={`${publicBase}/characters.html`}>Персонаж / TD</a>}
+                <a href={`${publicBase}/universe.html`}>Карта вселенной</a>
+              </div>
             </div>
           </aside>
         </div>

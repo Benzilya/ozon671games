@@ -91,10 +91,14 @@ export default function CharactersClient() {
               <dl>
                 <div><dt>Роль</dt><dd>{active.role}</dd></div>
                 <div><dt>Источник</dt><dd>{active.status === "Подтверждено" ? "Описание произведения" : "Ожидается"}</dd></div>
-                <div><dt>Связи</dt><dd>{active.status === "Подтверждено" ? "Будут добавлены после проверки" : "REDACTED"}</dd></div>
+                <div><dt>Связи</dt><dd>{active.status === "Подтверждено" ? "Открыть связанные дела ниже" : "REDACTED"}</dd></div>
                 <div><dt>Спойлеры</dt><dd>{spoilers ? "Поле открыто, подтверждённых данных пока нет" : "Скрыты"}</dd></div>
               </dl>
-              {active.id === "tihiy-den" && <a className="ds-button ds-button--primary" href={`${publicBase}/stories/tihiy-den.html`}>Открыть произведение</a>}
+              <div className="case-crosslinks" aria-label="Связанные дела">
+                {active.id === "tihiy-den" && <a href={`${publicBase}/stories/tihiy-den.html`}>Произведение / TD</a>}
+                <a href={`${publicBase}/universe.html`}>Карта вселенной</a>
+                <a href={`${publicBase}/films.html`}>Визуальный архив</a>
+              </div>
             </div>
           </aside>
         </div>

@@ -9,11 +9,11 @@ const publicBase = process.env.GITHUB_ACTIONS === "true" ? "/ozon671games" : "";
 const sections = [
   { title: "Аудиокниги", type: "Раздел", description: "Каталог историй и фильтры по жанру, статусу и формату.", href: "/audiobooks.html", keywords: "истории аудио каталог" },
   { title: "AI-фильмы", type: "Раздел", description: "AI-концепты, фанатские адаптации и визуальный архив.", href: "/films.html", keywords: "видео фильм трейлер ai" },
-  { title: "Персонажи", type: "Раздел", description: "Архив подтверждённых персонажей и редакционных связей.", href: "/characters.html", keywords: "герои персонажи" },
-  { title: "Хронология", type: "Раздел", description: "Редакционная хронология событий вселенной.", href: "/timeline.html", keywords: "события время хронология" },
-  { title: "Карта вселенной", type: "Раздел", description: "Связи произведений, персонажей, событий и локаций.", href: "/universe.html", keywords: "карта мир связи локации" },
-  { title: "Магазин", type: "Раздел", description: "Концепты печатных изданий и других товаров; цены и наличие только из CMS.", href: "/shop.html", keywords: "книга товар издание постер" },
-  { title: "Сообщество", type: "Раздел", description: "Фан-работы, опросы, стримы и внешние каналы проекта.", href: "/community.html", keywords: "фанаты фанарт опрос стрим" },
+  { title: "Персонажи", type: "Раздел", description: "Архив подтверждённых персонажей и закрытых полей, ожидающих редакционных данных.", href: "/characters.html", keywords: "герои персонажи" },
+  { title: "Хронология", type: "Раздел", description: "Хронология подтверждённых событий с отдельными редакционными и альтернативными слоями.", href: "/timeline.html", keywords: "события время хронология" },
+  { title: "Карта вселенной", type: "Раздел", description: "Карта произведений архива. Межкнижные связи появляются только после подтверждения авторскими материалами или CMS.", href: "/universe.html", keywords: "карта мир произведения архив" },
+  { title: "Магазин", type: "Раздел", description: "Печатные и другие товары; точные цены, тиражи и наличие только из CMS.", href: "/shop.html", keywords: "книга товар издание постер" },
+  { title: "Сообщество", type: "Раздел", description: "Фан-работы, локальные демо-опросы, будущие стримы и внешние каналы проекта.", href: "/community.html", keywords: "фанаты фанарт опрос стрим" },
 ];
 
 export default function SearchClient() {

@@ -30,16 +30,17 @@ export default function ArchiveTrail() {
     return files.findIndex((file) => file.match.some((prefix) => pathname.startsWith(prefix)));
   }, [pathname]);
 
-  if (!pathname || pathname === "/" || pathname.startsWith("/account") || pathname.startsWith("/admin") || pathname.startsWith("/search") || pathname.startsWith("/shop")) return null;
+  if (!pathname || pathname === "/" || pathname.startsWith("/account") || pathname.startsWith("/admin") || pathname.startsWith("/search") || pathname.startsWith("/shop") || pathname.startsWith("/legal")) return null;
 
   const active = activeIndex >= 0 ? files[activeIndex] : null;
-  const next = files[(activeIndex + 1 + files.length) % files.length];
+  if (!active) return null;
+  const next = files[(activeIndex + 1) % files.length];
 
   return (
     <nav className="archive-trail" aria-label="Переход между связанными разделами архива">
       <span className="archive-trail-index">CASE PATH</span>
       <a href={`${publicBase}/`} className="archive-trail-home">671 / INDEX</a>
-      {active && <span className="archive-trail-current" aria-current="page">{active.label}</span>}
+      <span className="archive-trail-current" aria-current="page">{active.label}</span>
       <a href={`${publicBase}${next.href}`} className="archive-trail-next"><small>Следующее дело</small><strong>{next.label}</strong><span aria-hidden="true">→</span></a>
     </nav>
   );

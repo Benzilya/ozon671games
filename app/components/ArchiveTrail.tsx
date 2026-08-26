@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 
 const publicBase = process.env.GITHUB_ACTIONS === "true" ? "/ozon671games" : "";
 
@@ -18,12 +18,12 @@ function normalizePath(pathname: string) {
   return pathname;
 }
 
-export default function ArchiveTrail() {
-  const [pathname, setPathname] = useState<string | null>(null);
+const subscribe = () => () => undefined;
+const getServerSnapshot = () => "";
+const getSnapshot = () => typeof window === "undefined" ? "" : normalizePath(window.location.pathname);
 
-  useEffect(() => {
-    setPathname(normalizePath(window.location.pathname));
-  }, []);
+export default function ArchiveTrail() {
+  const pathname = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const activeIndex = useMemo(() => {
     if (!pathname) return -1;

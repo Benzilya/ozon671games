@@ -67,21 +67,21 @@
 - проверка page errors, console errors и failed resources;
 - DOM budget: до 2500 nodes;
 - transfer budget: до 4 MiB;
-- navigation budget: до 5000 ms;
-- проверка ключевых desktop и mobile routes.
+- navigation budget: до 8000 ms;
+- все 13 маршрутов приложения проверяются на desktop 1440×1000 и mobile 390×844 — 26 browser-аудитов на прогон.
 
 ### Этап 19 — доступность
 
 - skip link, focus-visible, keyboard paths, reduced motion;
 - автоматизированный Chromium + axe gate для serious/critical violations;
-- проверка `main`/`h1` и ключевых маршрутов;
-- contrast regressions исправлены, включая новый `CASE PATH`;
+- проверка `main`/`h1` на всех 13 маршрутах в desktop и mobile;
+- contrast regressions исправлены, включая `CASE PATH`, архивные правила персонажей, легенду хронологии и легенду вселенной;
 - автоматический axe не заменяет ручную screen-reader/assistive-technology проверку, но серьёзные автоматически обнаруживаемые regressions блокируют CI.
 
 ### Этап 20 — мобильная версия
 
 - responsive layout и mobile dock;
-- browser QA на 390×844;
+- browser QA на 390×844 для всех 13 маршрутов;
 - исправлен shop horizontal overflow;
 - `CASE PATH` имеет отдельный mobile clearance над dock;
 - mobile overflow regression-gated в CI.
@@ -94,7 +94,8 @@
 - permanent browser quality workflow;
 - GitHub Pages deploy workflow;
 - `cloudflare-config-smoke`: synthetic production env → Wrangler config generation → Cloudflare Vite build → `wrangler deploy --dry-run` без production secrets;
-- regression tests блокируют возврат выдуманных псевдоканонических file IDs, цен, cross-story claims и немаркированного interface copy.
+- browser gate дедуплицирует все same-origin `href` и проверяет каждый уникальный внутренний target на отсутствие 4xx/5xx;
+- regression tests блокируют возврат выдуманных псевдоканонических file IDs, цен, cross-story claims, немаркированного interface copy, generic public WIP labels и dead disabled CTA.
 
 ### Этап 23 — production hardening
 
@@ -118,8 +119,11 @@
 - отдельный regression contract блокирует случайное исчезновение soundscape из production UI;
 - внутренние публичные страницы получили единый archival spine, служебную красную линию, `INDEX / FILTERS` и `ACTIVE FILE` язык;
 - добавлен контекстный `CASE PATH` между публичными тематическими разделами с keyboard focus, mobile clearance и reduced-transparency fallback;
+- generic `WIP / WORK IN PROGRESS` убран из публичных поверхностей в пользу точных архивных статусов, а реальные `DEMO / CMS / PENDING` ограничения сохранены;
+- dead disabled CTA в аудиокаталоге и сообществе заменены на честные статусы или реальные доступные действия;
+- пустые состояния глобального поиска, аудиокаталога и кадрового архива получили явные recovery actions: очистить запрос/фильтры или перейти в существующий связанный раздел;
 - account/admin намеренно не превращаются в художественные «досье», чтобы сохранить функциональную ясность;
-- визуальные и контентные изменения проходят Validate project, Product tests, Production dependency audit, Cloudflare dry-run и Browser quality gates перед merge.
+- визуальные и контентные изменения проходят Validate project, Product tests, Production dependency audit, Cloudflare dry-run и полный Browser quality gate перед merge.
 
 ## Что требует внешней инфраструктуры
 

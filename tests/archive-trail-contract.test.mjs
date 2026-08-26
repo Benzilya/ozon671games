@@ -26,5 +26,5 @@ test("archive trail clears mobile dock and keeps readable keyboard UI", () => {
   assert.match(css, /bottom:126px/);
   assert.match(css, /focus-visible/);
   assert.match(css, /prefers-reduced-transparency/);
-  assert.match(css, /archive-trail-index\{[^}]*color:#b7afa3/);
+  assert.match(css, /archive-trail-index\{[^}]*background:#0b0b0a[^}]*color:#f1eadf/);
 });
